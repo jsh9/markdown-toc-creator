@@ -3,6 +3,7 @@
 ## [0.0.2] - 2023-07-19
 
 - Fixed
+
   - Fixed pre-commit hooks
   - Fixed how ToC display texts are rendered
 
