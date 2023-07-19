@@ -97,7 +97,7 @@ def main(
         quiet: bool,
         in_place: bool,
         src: Optional[str],
-        paths: tuple[str, ...],
+        paths: Tuple[str, ...],
         style: str,
 ):
     """Command-line entry point"""
@@ -129,7 +129,7 @@ def main(
 
 
 def _checkPaths(
-        paths: tuple[str, ...],
+        paths: Tuple[str, ...],
         exclude: str = '',
         skip_first_n_lines: int = 1,
         quiet: bool = False,
