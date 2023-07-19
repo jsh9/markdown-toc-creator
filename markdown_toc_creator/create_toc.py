@@ -63,7 +63,7 @@ def createToc(  # noqa: C901
 
     deduplicateAnchorLinkText(tocEntries=tocEntries)
 
-    tocLines: list[str] = [_.render() for _ in tocEntries]
+    tocLines: List[str] = [_.render() for _ in tocEntries]
 
     if not quiet:
         for entry in tocEntries:
@@ -78,7 +78,7 @@ def createToc(  # noqa: C901
     return tocLines
 
 
-def hasTocInsertionPoint(textLines: list[str]) -> bool:
+def hasTocInsertionPoint(textLines: List[str]) -> bool:
     tagCounter = 0
     for line in textLines:
         if line == TOC_TAG:
@@ -87,7 +87,7 @@ def hasTocInsertionPoint(textLines: list[str]) -> bool:
     return tagCounter == 2
 
 
-def findTocInsertionPoint(textLine: list[str]) -> Tuple[int, int]:
+def findTocInsertionPoint(textLine: List[str]) -> Tuple[int, int]:
     """Assuming this markdown has ToC insertion point, find it"""
     counter = 0
     result = []
