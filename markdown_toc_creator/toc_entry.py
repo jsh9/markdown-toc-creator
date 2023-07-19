@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 import re
 from collections import defaultdict
+from typing import List, Set
 
 from bs4 import BeautifulSoup
 
@@ -46,11 +45,11 @@ class TocEntry:
         return self.indent + f'- [{self.displayText}]({self.anchorLinkText})'
 
 
-def deduplicateAnchorLinkText(tocEntries: list[TocEntry]) -> None:
-    allAnchorLinkTexts: list[str] = [_.anchorLinkText for _ in tocEntries]
+def deduplicateAnchorLinkText(tocEntries: List[TocEntry]) -> None:
+    allAnchorLinkTexts: List[str] = [_.anchorLinkText for _ in tocEntries]
 
-    seen: set[str] = set()
-    duplicated: set[str] = set()
+    seen: Set[str] = set()
+    duplicated: Set[str] = set()
 
     for text in allAnchorLinkTexts:
         if text not in seen:

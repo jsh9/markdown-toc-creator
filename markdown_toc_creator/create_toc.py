@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Tuple
 
 from markdown_toc_creator.exceptions import HeaderLevelNotContinuousException
 from markdown_toc_creator.toc_entry import TocEntry, deduplicateAnchorLinkText
@@ -12,7 +13,7 @@ def createToc(  # noqa: C901
         quiet: bool = False,
         in_place: bool = True,
         style: str = 'github',
-) -> list[str]:
+) -> List[str]:
     """Create table of content"""
     if not quiet:
         print('----------------------')
@@ -32,7 +33,7 @@ def createToc(  # noqa: C901
 
     isInitialHeader: bool = True
 
-    tocEntries: list[TocEntry] = []
+    tocEntries: List[TocEntry] = []
 
     for i, line in enumerate(lines):
         if i + 1 <= skip_first_n_lines:
@@ -86,7 +87,7 @@ def hasTocInsertionPoint(textLines: list[str]) -> bool:
     return tagCounter == 2
 
 
-def findTocInsertionPoint(textLine: list[str]) -> tuple[int, int]:
+def findTocInsertionPoint(textLine: list[str]) -> Tuple[int, int]:
     """Assuming this markdown has ToC insertion point, find it"""
     counter = 0
     result = []

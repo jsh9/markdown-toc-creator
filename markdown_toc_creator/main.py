@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 import re
 from pathlib import Path
+from typing import Optional
 
 import click
 
@@ -18,8 +17,8 @@ echoAsError = True
 def validateStyleValue(
         context: click.Context,
         param: click.Parameter,
-        value: str | None,
-) -> str | None:
+        value: Optional[str],
+) -> Optional[str]:
     """Validate the value of the 'style' option"""
     if value not in {'github', 'gitlab'}:
         raise click.BadParameter('"--style" must be "github" or "gitlab"')
@@ -97,7 +96,7 @@ def main(
         skip_first_n_lines: int,
         quiet: bool,
         in_place: bool,
-        src: str | None,
+        src: Optional[str],
         paths: tuple[str, ...],
         style: str,
 ):
