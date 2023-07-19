@@ -3,4 +3,3 @@
   description: "Create table of contents for markdown files"
   entry: markdown-toc-creator
   language: python
-  types: [python]

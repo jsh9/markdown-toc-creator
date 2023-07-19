@@ -17,9 +17,12 @@ class TocEntry:
         self.style = style
         self.anchorLinkText: str = self._calcAnchorLinkText()
 
+    def render(self) -> str:
+        text = self.removePoundChar(self.displayText)
+        return self.indent + f'- [{text}]({self.anchorLinkText})'
+
     def _calcAnchorLinkText(self) -> str:
-        # remove '#' characters from the start of the header
-        text = re.sub(r'^#+\s', '', self.displayText)
+        text = self.removePoundChar(self.displayText)
 
         # remove HTML tags
         soup = BeautifulSoup(text, 'html.parser')
@@ -41,8 +44,10 @@ class TocEntry:
         # prepend '#' to create a URL anchor
         return '#' + anchorLink
 
-    def render(self) -> str:
-        return self.indent + f'- [{self.displayText}]({self.anchorLinkText})'
+    @classmethod
+    def removePoundChar(cls, string: str) -> str:
+        # remove '#' characters from the start of the header
+        return re.sub(r'^#+\s', '', string)
 
 
 def deduplicateAnchorLinkText(tocEntries: List[TocEntry]) -> None:
