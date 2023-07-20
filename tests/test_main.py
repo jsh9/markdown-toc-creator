@@ -30,6 +30,12 @@ def testCreateToc(style: str) -> None:
             '  - [This header has 3.5 in it (and parentheses)](#this-header-has-35-in-it-and-parentheses)',
             "    - [What day is today? I don't know.](#what-day-is-today-i-dont-know)",
             '  - [This header has     consecutive spaces in it](#this-header-has-----consecutive-spaces-in-it)',
+            '    - [Hello _world_](#hello-world)',
+            '    - [Hello *world*](#hello-world-1)',
+            '    - [Hello __world__](#hello-world-2)',
+            '    - [Hello **world**](#hello-world-3)',
+            '    - [Hello _**world**_](#hello-world-4)',
+            '    - [Hello *__world__*](#hello-world-5)',
         ],
         'gitlab': [
             '- [This header has spaces in it](#this-header-has-spaces-in-it)',
@@ -40,6 +46,12 @@ def testCreateToc(style: str) -> None:
             '  - [This header has 3.5 in it (and parentheses)](#this-header-has-35-in-it-and-parentheses)',
             "    - [What day is today? I don't know.](#what-day-is-today-i-dont-know)",
             '  - [This header has     consecutive spaces in it](#this-header-has-consecutive-spaces-in-it)',
+            '    - [Hello _world_](#hello-world)',
+            '    - [Hello *world*](#hello-world-1)',
+            '    - [Hello __world__](#hello-world-2)',
+            '    - [Hello **world**](#hello-world-3)',
+            '    - [Hello _**world**_](#hello-world-4)',
+            '    - [Hello *__world__*](#hello-world-5)',
         ],
     }
     assert tocLines == expected[style]

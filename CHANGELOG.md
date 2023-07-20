@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.0.4] - 2023-07-20
+
+- Fixed
+
+  - Fixed how underscores are handled in anchor links
+
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.3...0.0.4
+
 ## [0.0.3] - 2023-07-19
 
 - Added

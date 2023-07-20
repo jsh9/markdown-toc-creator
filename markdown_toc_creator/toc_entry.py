@@ -32,8 +32,13 @@ class TocEntry:
             # remove emojis represented as :emoji_name:
             text = re.sub(r':[\w\d_]+:', '', text)
 
-        # convert to lower case, replace spaces with hyphens, remove special characters
-        anchorLink = re.sub(r'[^\w\s-]+', '', text.lower().replace(' ', '-'))
+        # convert to lower case, replace spaces with hyphens,
+        # remove special characters and underscores
+        anchorLink = re.sub(
+            r'[^\w\s-]+',
+            '',
+            text.lower().replace(' ', '-').replace('_', ''),
+        )
 
         if self.style == 'gitlab':
             anchorLink = re.sub(r'-+', '-', anchorLink)
