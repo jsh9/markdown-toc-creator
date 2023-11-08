@@ -9,7 +9,6 @@
 - Full diff
   - https://github.com/jsh9/markdown-toc-creator/compare/0.0.4...0.0.5
 
-
 ## [0.0.4] - 2023-07-20
 
 - Fixed
