@@ -32,14 +32,17 @@ def createToc(  # noqa: C901
     initialLevel = -1  # just a placeholder
 
     isInitialHeader: bool = True
-
     tocEntries: List[TocEntry] = []
+    inCodeBlock: bool = False
 
     for i, line in enumerate(lines):
+        if line.strip().startswith('```'):
+            inCodeBlock = not inCodeBlock
+
         if i + 1 <= skip_first_n_lines:
             continue
 
-        if line.strip().startswith('#'):
+        if line.strip().startswith('#') and not inCodeBlock:
             thisLevel: int = _countNumOfPoundSigns(line)
             if isInitialHeader:
                 isInitialHeader = False
@@ -47,12 +50,12 @@ def createToc(  # noqa: C901
                 prevLevel = thisLevel
 
             if thisLevel < initialLevel:
-                raise HeaderLevelNotContinuousException(line)
+                raise HeaderLevelNotContinuousException(f'"{line}"')
 
             if thisLevel - prevLevel > 1:
                 print(thisLevel)
                 print(prevLevel)
-                raise HeaderLevelNotContinuousException(line)
+                raise HeaderLevelNotContinuousException(f'"{line}"')
 
             absoluteLevelDiff: int = thisLevel - initialLevel
             indent = absoluteLevelDiff * '  '
