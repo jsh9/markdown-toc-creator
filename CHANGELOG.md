@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.6] - 2024-01-08
+
+- Fixed
+  - Fixed a bug where dashes within backtick ("`") pairs are removed
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.5...0.0.6
+
 ## [0.0.5] - 2023-11-08
 
 - Fixed
