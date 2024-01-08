@@ -36,6 +36,7 @@ def testCreateToc(style: str) -> None:
             '    - [Hello **world**](#hello-world-3)',
             '    - [Hello _**world**_](#hello-world-4)',
             '    - [Hello *__world__*](#hello-world-5)',
+            '  - [Here is `hello_?and!_world`](#here-is-hello_and_world)',
         ],
         'gitlab': [
             '- [This header has spaces in it](#this-header-has-spaces-in-it)',
@@ -52,6 +53,7 @@ def testCreateToc(style: str) -> None:
             '    - [Hello **world**](#hello-world-3)',
             '    - [Hello _**world**_](#hello-world-4)',
             '    - [Hello *__world__*](#hello-world-5)',
+            '  - [Here is `hello_?and!_world`](#here-is-hello_and_world)',
         ],
     }
     assert tocLines == expected[style]
