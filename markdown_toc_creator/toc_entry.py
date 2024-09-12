@@ -1,9 +1,10 @@
 import re
+import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import List, Literal, Set
 
-from bs4 import BeautifulSoup
+import bs4
 
 
 class TocEntry:
@@ -26,8 +27,12 @@ class TocEntry:
         text = self.removePoundChar(self.displayText)
 
         # remove HTML tags
-        soup = BeautifulSoup(text, 'html.parser')
-        text = soup.get_text()
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                action='ignore', category=bs4.MarkupResemblesLocatorWarning
+            )
+            soup = bs4.BeautifulSoup(text, 'html.parser')
+            text = soup.get_text()
 
         return self.convertToAnkerLink(text=text, style=self.style)
 
@@ -47,6 +52,7 @@ class TocEntry:
             text = re.sub(r':[\w\d_]+:', '', text)
 
         text = text.lower()
+        text = re.sub(r'\[(.*?)]\(.*?\)', '\\1', text)
 
         listOfCharGroups: List[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)

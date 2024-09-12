@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.7] - 2024-09-12
+
+- Changed
+  - Rendered hyperlinks as texts only
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.6...0.0.7
+
 ## [0.0.6] - 2024-01-08
 
 - Fixed

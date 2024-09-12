@@ -2,7 +2,11 @@ from typing import List
 
 import pytest
 
-from markdown_toc_creator.toc_entry import _buildListOfCharGroups, _CharGroup
+from markdown_toc_creator.toc_entry import (
+    TocEntry,
+    _buildListOfCharGroups,
+    _CharGroup,
+)
 
 
 @pytest.mark.parametrize(
@@ -92,3 +96,13 @@ from markdown_toc_creator.toc_entry import _buildListOfCharGroups, _CharGroup
 def testBuildListOfCharGroups(string: str, expected: List[_CharGroup]) -> None:
     result = _buildListOfCharGroups(string)
     assert result == expected
+
+
+def test_link_removal():
+    entry = TocEntry('hello world [somelink](https://foo.bar)', '', 'github')
+    assert entry.anchorLinkText == '#hello-world-somelink'
+
+
+def test_emoji_at_beginning():
+    entry = TocEntry('🐧 hello world', '', 'github')
+    assert entry.anchorLinkText == '#-hello-world'
