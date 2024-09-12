@@ -2,7 +2,11 @@ from typing import List
 
 import pytest
 
-from markdown_toc_creator.toc_entry import _buildListOfCharGroups, _CharGroup, TocEntry
+from markdown_toc_creator.toc_entry import (
+    TocEntry,
+    _buildListOfCharGroups,
+    _CharGroup,
+)
 
 
 @pytest.mark.parametrize(

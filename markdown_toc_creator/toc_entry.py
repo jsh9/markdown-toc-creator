@@ -1,8 +1,8 @@
 import re
+import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import List, Literal, Set
-import warnings
 
 import bs4
 
@@ -29,7 +29,7 @@ class TocEntry:
         # remove HTML tags
         with warnings.catch_warnings():
             warnings.filterwarnings(
-                action="ignore", category=bs4.MarkupResemblesLocatorWarning
+                action='ignore', category=bs4.MarkupResemblesLocatorWarning
             )
             soup = bs4.BeautifulSoup(text, 'html.parser')
             text = soup.get_text()
