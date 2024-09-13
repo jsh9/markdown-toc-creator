@@ -100,9 +100,10 @@ def testBuildListOfCharGroups(string: str, expected: List[_CharGroup]) -> None:
 
 def test_link_removal():
     entry = TocEntry('hello world [somelink](https://foo.bar)', '', 'github')
-    assert entry.anchorLinkText == '#hello-world-somelink'
+    assert entry.render() == '- [hello world somelink](#hello-world-somelink)'
 
 
 def test_emoji_at_beginning():
     entry = TocEntry('🐧 hello world', '', 'github')
     assert entry.anchorLinkText == '#-hello-world'
+    assert entry.render() == '- [🐧 hello world](#-hello-world)'
