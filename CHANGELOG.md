@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.8] - 2024-09-16
+
+- Changed
+  - Strip links inside headings before including them in ToC
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.7...0.0.8
+
 ## [0.0.7] - 2024-09-12
 
 - Changed
