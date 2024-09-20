@@ -21,6 +21,7 @@ class TocEntry:
 
     def render(self) -> str:
         text = self.removePoundChar(self.displayText)
+        text = self.mdLinkToText(text)
         return self.indent + f'- [{text}]({self.anchorLinkText})'
 
     def _calcAnchorLinkText(self) -> str:
@@ -42,6 +43,12 @@ class TocEntry:
         return re.sub(r'^#+\s', '', string)
 
     @classmethod
+    def mdLinkToText(cls, string: str) -> str:
+        # Replace markdown links with their display text
+        # E.g., [my site](mysite.com) -> my site
+        return re.sub(r'\[(.*?)]\(.*?\)', '\\1', string)
+
+    @classmethod
     def convertToAnkerLink(
             cls,
             text: str,
@@ -52,7 +59,7 @@ class TocEntry:
             text = re.sub(r':[\w\d_]+:', '', text)
 
         text = text.lower()
-        text = re.sub(r'\[(.*?)]\(.*?\)', '\\1', text)
+        text = cls.mdLinkToText(text)
 
         listOfCharGroups: List[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)
