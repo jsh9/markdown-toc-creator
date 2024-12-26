@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.10] - 2024-12-25
+
+- Fixed
+  - Fixed dashes for GitHub style
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.9...0.0.10
+
 ## [0.0.9] - 2024-12-25
 
 - Changed

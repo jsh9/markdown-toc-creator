@@ -3,6 +3,7 @@ import warnings
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import List, Literal, Set
+import unicodedata
 
 import bs4
 
@@ -63,7 +64,9 @@ class TocEntry:
 
         listOfCharGroups: List[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)
-        anchorLink = re.sub(r'-+', '-', anchorLink)
+
+        if style == 'gitlab':
+            anchorLink = re.sub(r'-+', '-', anchorLink)
 
         # check last character
         anchorLink = anchorLink[:-1] if anchorLink[-1] == '-' else anchorLink
@@ -108,6 +111,42 @@ class _CharGroup:
             and self.insideBacktickPairs == other.insideBacktickPairs
         )
 
+    def reduceToOnlyOneLeadingNonAlphaNumericChars(self) -> None:
+        """Reduce to only 1 leading non-alphanumeric characters"""
+        flag: bool = False
+        leadingNonAlphaNumericChars: List[str] = []
+        otherChars: List[str] = []
+
+        for i, char in enumerate(self.chars):
+            if flag:
+                break
+
+            if _isWordChar(char):
+                flag = True
+                otherChars.extend(self.chars[i:])
+                continue
+
+            leadingNonAlphaNumericChars.append(char)
+
+        self.chars = leadingNonAlphaNumericChars[-1:] + otherChars
+
+
+def _isWordChar(char: str) -> bool:
+    """
+    Check if a char is a word character (alphanumeric, emoji, characters of
+    other languages).
+    """
+    if char.isalnum():
+        return True
+
+    if unicodedata.category(char) == 'So':  # "Symbol, other", i.e., emoji
+        return True
+
+    if unicodedata.category(char).startswith('L'):  # letters of any script
+        return True
+
+    return False
+
 
 def _buildListOfCharGroups(string: str) -> List[_CharGroup]:
     result: List[_CharGroup]
@@ -138,6 +177,9 @@ def _constructAnchorLink(listOfCharGroups: List[_CharGroup]) -> str:
     temp: List[str] = []
     for charGroup in listOfCharGroups:
         if not charGroup.insideBacktickPairs:
+            # This is fine for both GitHub and Gitlab styles
+            charGroup.reduceToOnlyOneLeadingNonAlphaNumericChars()
+
             # We put `strip()` before replacing " " to "-" to prevent
             # double dashes
             temp.append(
