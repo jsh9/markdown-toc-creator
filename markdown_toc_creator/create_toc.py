@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import List, Tuple
 
 from markdown_toc_creator.exceptions import HeaderLevelNotContinuousException
 from markdown_toc_creator.toc_entry import TocEntry, deduplicateAnchorLinkText
@@ -13,7 +14,7 @@ def createToc(  # noqa: C901
         quiet: bool = False,
         in_place: bool = True,
         style: str = 'github',
-) -> List[str]:
+) -> list[str]:
     """Create table of content"""
     if not quiet:
         print('----------------------')
@@ -32,7 +33,7 @@ def createToc(  # noqa: C901
     initialLevel = -1  # just a placeholder
 
     isInitialHeader: bool = True
-    tocEntries: List[TocEntry] = []
+    tocEntries: list[TocEntry] = []
     inCodeBlock: bool = False
 
     for i, line in enumerate(lines):
@@ -66,7 +67,7 @@ def createToc(  # noqa: C901
 
     deduplicateAnchorLinkText(tocEntries=tocEntries)
 
-    tocLines: List[str] = [_.render() for _ in tocEntries]
+    tocLines: list[str] = [_.render() for _ in tocEntries]
 
     if not quiet:
         for entry in tocEntries:
@@ -81,7 +82,7 @@ def createToc(  # noqa: C901
     return tocLines
 
 
-def hasTocInsertionPoint(textLines: List[str]) -> bool:
+def hasTocInsertionPoint(textLines: list[str]) -> bool:
     tagCounter = 0
     for line in textLines:
         if line == TOC_TAG:
@@ -90,7 +91,7 @@ def hasTocInsertionPoint(textLines: List[str]) -> bool:
     return tagCounter == 2
 
 
-def findTocInsertionPoint(textLine: List[str]) -> Tuple[int, int]:
+def findTocInsertionPoint(textLine: list[str]) -> tuple[int, int]:
     """Assuming this markdown has ToC insertion point, find it"""
     counter = 0
     result = []

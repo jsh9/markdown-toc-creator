@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import re
+import unicodedata
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import List, Literal, Set
+from typing import Literal
 
 import bs4
 
@@ -61,9 +64,11 @@ class TocEntry:
         text = text.lower()
         text = cls.mdLinkToText(text)
 
-        listOfCharGroups: List[_CharGroup] = _buildListOfCharGroups(text)
+        listOfCharGroups: list[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)
-        anchorLink = re.sub(r'-+', '-', anchorLink)
+
+        if style == 'gitlab':
+            anchorLink = re.sub(r'-+', '-', anchorLink)
 
         # check last character
         anchorLink = anchorLink[:-1] if anchorLink[-1] == '-' else anchorLink
@@ -72,11 +77,11 @@ class TocEntry:
         return '#' + anchorLink
 
 
-def deduplicateAnchorLinkText(tocEntries: List[TocEntry]) -> None:
-    allAnchorLinkTexts: List[str] = [_.anchorLinkText for _ in tocEntries]
+def deduplicateAnchorLinkText(tocEntries: list[TocEntry]) -> None:
+    allAnchorLinkTexts: list[str] = [_.anchorLinkText for _ in tocEntries]
 
-    seen: Set[str] = set()
-    duplicated: Set[str] = set()
+    seen: set[str] = set()
+    duplicated: set[str] = set()
 
     for text in allAnchorLinkTexts:
         if text not in seen:
@@ -99,7 +104,7 @@ def deduplicateAnchorLinkText(tocEntries: List[TocEntry]) -> None:
 
 @dataclass
 class _CharGroup:
-    chars: List[str]
+    chars: list[str]
     insideBacktickPairs: bool
 
     def __eq__(self, other: '_CharGroup') -> bool:
@@ -108,9 +113,45 @@ class _CharGroup:
             and self.insideBacktickPairs == other.insideBacktickPairs
         )
 
+    def reduceToOnlyOneLeadingNonAlphaNumericChars(self) -> None:
+        """Reduce to only 1 leading non-alphanumeric characters"""
+        flag: bool = False
+        leadingNonAlphaNumericChars: list[str] = []
+        otherChars: list[str] = []
 
-def _buildListOfCharGroups(string: str) -> List[_CharGroup]:
-    result: List[_CharGroup]
+        for i, char in enumerate(self.chars):
+            if flag:
+                break
+
+            if _isWordChar(char):
+                flag = True
+                otherChars.extend(self.chars[i:])
+                continue
+
+            leadingNonAlphaNumericChars.append(char)
+
+        self.chars = leadingNonAlphaNumericChars[-1:] + otherChars
+
+
+def _isWordChar(char: str) -> bool:
+    """
+    Check if a char is a word character (alphanumeric, emoji, characters of
+    other languages).
+    """
+    if char.isalnum():
+        return True
+
+    if unicodedata.category(char) == 'So':  # "Symbol, other", i.e., emoji
+        return True
+
+    if unicodedata.category(char).startswith('L'):  # letters of any script
+        return True
+
+    return False
+
+
+def _buildListOfCharGroups(string: str) -> list[_CharGroup]:
+    result: list[_CharGroup]
     isWithinBacktickPair: bool
 
     if string[0] == '`':
@@ -134,10 +175,13 @@ def _buildListOfCharGroups(string: str) -> List[_CharGroup]:
     return result
 
 
-def _constructAnchorLink(listOfCharGroups: List[_CharGroup]) -> str:
-    temp: List[str] = []
+def _constructAnchorLink(listOfCharGroups: list[_CharGroup]) -> str:
+    temp: list[str] = []
     for charGroup in listOfCharGroups:
         if not charGroup.insideBacktickPairs:
+            # This is fine for both GitHub and Gitlab styles
+            charGroup.reduceToOnlyOneLeadingNonAlphaNumericChars()
+
             # We put `strip()` before replacing " " to "-" to prevent
             # double dashes
             temp.append(
