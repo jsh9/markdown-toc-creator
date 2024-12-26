@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import re
 from pathlib import Path
-from typing import Optional, Tuple
 
 import click
 
@@ -17,8 +18,8 @@ echoAsError = True
 def validateStyleValue(
         context: click.Context,
         param: click.Parameter,
-        value: Optional[str],
-) -> Optional[str]:
+        value: str | None,
+) -> str | None:
     """Validate the value of the 'style' option"""
     if value not in {'github', 'gitlab'}:
         raise click.BadParameter('"--style" must be "github" or "gitlab"')
@@ -96,8 +97,8 @@ def main(
         skip_first_n_lines: int,
         quiet: bool,
         in_place: bool,
-        src: Optional[str],
-        paths: Tuple[str, ...],
+        src: str | None,
+        paths: tuple[str, ...],
         style: str,
 ):
     """Command-line entry point"""
@@ -129,7 +130,7 @@ def main(
 
 
 def _checkPaths(
-        paths: Tuple[str, ...],
+        paths: tuple[str, ...],
         exclude: str = '',
         skip_first_n_lines: int = 1,
         quiet: bool = False,

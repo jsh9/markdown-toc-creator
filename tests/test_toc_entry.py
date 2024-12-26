@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 
 import pytest
 
@@ -102,7 +102,7 @@ from markdown_toc_creator.toc_entry import (
         ),
     ],
 )
-def testBuildListOfCharGroups(string: str, expected: List[_CharGroup]) -> None:
+def testBuildListOfCharGroups(string: str, expected: list[_CharGroup]) -> None:
     result = _buildListOfCharGroups(string)
     assert result == expected
 
@@ -131,8 +131,8 @@ def test_emoji_at_beginning():
     ],
 )
 def testReduceToOnlyOneLeadingNonAlphaNumericChars(
-        oldChars: List[str],
-        expectedChars: List[str],
+        oldChars: list[str],
+        expectedChars: list[str],
 ) -> None:
     charGroup = _CharGroup(chars=oldChars, insideBacktickPairs=False)
     charGroup.reduceToOnlyOneLeadingNonAlphaNumericChars()
