@@ -72,4 +72,6 @@ b = 1
 
 ## This is a [link to pypi](https://pypi.org/project/markdown-toc-creator/)
 
+## 5. `ABC`: There shouldn't be two consecutive dashes here
+
 <!-- prettier-ignore-end -->

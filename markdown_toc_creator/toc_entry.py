@@ -35,7 +35,7 @@ class TocEntry:
             soup = bs4.BeautifulSoup(text, 'html.parser')
             text = soup.get_text()
 
-        return self.convertToAnkerLink(text=text, style=self.style)
+        return self.convertToAnchorLink(text=text, style=self.style)
 
     @classmethod
     def removePoundChar(cls, string: str) -> str:
@@ -49,7 +49,7 @@ class TocEntry:
         return re.sub(r'\[(.*?)]\(.*?\)', '\\1', string)
 
     @classmethod
-    def convertToAnkerLink(
+    def convertToAnchorLink(
             cls,
             text: str,
             style: Literal['gitlab', 'github'],
@@ -63,9 +63,7 @@ class TocEntry:
 
         listOfCharGroups: List[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)
-
-        if style == 'gitlab':
-            anchorLink = re.sub(r'-+', '-', anchorLink)
+        anchorLink = re.sub(r'-+', '-', anchorLink)
 
         # check last character
         anchorLink = anchorLink[:-1] if anchorLink[-1] == '-' else anchorLink
@@ -101,8 +99,6 @@ def deduplicateAnchorLinkText(tocEntries: List[TocEntry]) -> None:
 
 @dataclass
 class _CharGroup:
-    """"""
-
     chars: List[str]
     insideBacktickPairs: bool
 

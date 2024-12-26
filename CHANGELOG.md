@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.0.9] - 2024-12-25
+
+- Changed
+  - No longer produce consecutive dashes for Github style, because Github's
+    behavior has changed (which becomes the same as Gitlab's)
+- Removed
+  - Removed Python 3.8 support
+- Added
+  - Added checks for Python 3.12 and 3.13
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.8...0.0.9
+
 ## [0.0.8] - 2024-09-16
 
 - Changed

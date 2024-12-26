@@ -91,6 +91,15 @@ from markdown_toc_creator.toc_entry import (
                 ),
             ],
         ),
+        (
+            "shouldn't",
+            [
+                _CharGroup(
+                    chars=['s', 'h', 'o', 'u', 'l', 'd', 'n', "'", 't'],
+                    insideBacktickPairs=False,
+                ),
+            ],
+        ),
     ],
 )
 def testBuildListOfCharGroups(string: str, expected: List[_CharGroup]) -> None:
