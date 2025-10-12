@@ -76,7 +76,7 @@ def createToc(  # noqa: C901
     if in_place:
         start, end = findTocInsertionPoint(lines)
         final = lines[: start + 1] + [''] + tocLines + [''] + lines[end + 1 :]
-        with open(filename, 'w') as fp:
+        with open(filename, 'w', encoding='utf-8') as fp:
             fp.writelines([_ + '\n' for _ in final])
 
     return tocLines

@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.0.11] - 2025-10-12
+
+- Fixed
+  - A bug where special characters would trigger errors on Windows system
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.0.10...0.0.11
+
 ## [0.0.10] - 2024-12-25
 
 - Fixed
