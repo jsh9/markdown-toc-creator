@@ -1,6 +1,7 @@
+---
 - id: markdown-toc-creator
   name: markdown-toc-creator
-  description: "Create table of contents for markdown files"
+  description: Create table of contents for markdown files
   entry: markdown-toc-creator
   language: python
   files: \.(md|mdown|markdown)$
