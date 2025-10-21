@@ -21,7 +21,7 @@ def createToc(  # noqa: C901
         print(filename)
         print('')
 
-    with open(filename, 'r', encoding='utf-8') as fp:
+    with open(filename, encoding='utf-8') as fp:
         lines = fp.readlines()
 
     lines = [_[:-1] for _ in lines]  # remove '\n' at the end of each line
@@ -83,6 +83,7 @@ def createToc(  # noqa: C901
 
 
 def hasTocInsertionPoint(textLines: list[str]) -> bool:
+    """Detect whether the lines have ToC insertion point"""
     tagCounter = 0
     for line in textLines:
         if line == TOC_TAG:
@@ -94,7 +95,7 @@ def hasTocInsertionPoint(textLines: list[str]) -> bool:
 def findTocInsertionPoint(textLine: list[str]) -> tuple[int, int]:
     """Assuming this markdown has ToC insertion point, find it"""
     counter = 0
-    result = []
+    result: list[int] = []
     for i, line in enumerate(textLine):
         if line == TOC_TAG:
             counter += 1
@@ -105,7 +106,10 @@ def findTocInsertionPoint(textLine: list[str]) -> tuple[int, int]:
             else:
                 raise ValueError('Internal error', counter)
 
-    return tuple(result)
+    if len(result) != 2:
+        raise ValueError(f'len(result) ≠ 2. result = {result}')
+
+    return result[0], result[1]
 
 
 def _countNumOfPoundSigns(string: str) -> int:

@@ -5,12 +5,13 @@ import unicodedata
 import warnings
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Literal
 
 import bs4
 
 
 class TocEntry:
+    """One entry of the table of contents"""
+
     def __init__(
             self,
             displayText: str,
@@ -23,6 +24,7 @@ class TocEntry:
         self.anchorLinkText: str = self._calcAnchorLinkText()
 
     def render(self) -> str:
+        """Render the current entry as a bullet point"""
         text = self.removePoundChar(self.displayText)
         text = self.mdLinkToText(text)
         return self.indent + f'- [{text}]({self.anchorLinkText})'
@@ -42,21 +44,24 @@ class TocEntry:
 
     @classmethod
     def removePoundChar(cls, string: str) -> str:
-        # remove '#' characters from the start of the header
+        """Remove '#' characters from the start of the header"""
         return re.sub(r'^#+\s', '', string)
 
     @classmethod
     def mdLinkToText(cls, string: str) -> str:
-        # Replace markdown links with their display text
-        # E.g., [my site](mysite.com) -> my site
+        """
+        Replace markdown links with their display text. E.g., [my
+        site](mysite.com) -> my site
+        """
         return re.sub(r'\[(.*?)]\(.*?\)', '\\1', string)
 
     @classmethod
     def convertToAnchorLink(
             cls,
             text: str,
-            style: Literal['gitlab', 'github'],
+            style: str,
     ) -> str:
+        """Convert the given text to a markdown anchor link"""
         if style == 'gitlab':
             # remove emojis represented as :emoji_name:
             text = re.sub(r':[\w\d_]+:', '', text)
@@ -78,6 +83,7 @@ class TocEntry:
 
 
 def deduplicateAnchorLinkText(tocEntries: list[TocEntry]) -> None:
+    """Duplicate the text in the anchor link, for each ToC entry"""
     allAnchorLinkTexts: list[str] = [_.anchorLinkText for _ in tocEntries]
 
     seen: set[str] = set()
@@ -92,13 +98,13 @@ def deduplicateAnchorLinkText(tocEntries: list[TocEntry]) -> None:
     if len(duplicated) == 0:
         return
 
-    counter = defaultdict(int)
+    counter: defaultdict[str, int] = defaultdict(int)
 
     for entry in tocEntries:
         if entry.anchorLinkText in duplicated:
             counter[entry.anchorLinkText] += 1
             count: int = counter[entry.anchorLinkText]
-            if count >= 2:  # we only modify anchor link from the 2nd occurrence
+            if count >= 2:  # we only modify anchor link from 2nd occurrence
                 entry.anchorLinkText += f'-{count - 1}'
 
 
@@ -107,7 +113,10 @@ class _CharGroup:
     chars: list[str]
     insideBacktickPairs: bool
 
-    def __eq__(self, other: '_CharGroup') -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, _CharGroup):
+            return False
+
         return (
             self.chars == other.chars
             and self.insideBacktickPairs == other.insideBacktickPairs
@@ -152,8 +161,6 @@ def _isWordChar(char: str) -> bool:
 
 def _buildListOfCharGroups(string: str) -> list[_CharGroup]:
     result: list[_CharGroup]
-    isWithinBacktickPair: bool
-
     if string[0] == '`':
         result = [_CharGroup(chars=[], insideBacktickPairs=True)]
     else:
