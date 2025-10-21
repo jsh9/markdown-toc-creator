@@ -5,7 +5,7 @@ import pytest
 from markdown_toc_creator.main import createToc
 
 THIS_DIR = Path(__file__).parent
-DATA_DIR = THIS_DIR / 'data'
+DATA_DIR = THIS_DIR / 'test_data'
 
 
 @pytest.mark.parametrize(
