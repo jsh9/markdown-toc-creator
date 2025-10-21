@@ -61,6 +61,34 @@ def validateStyleValue(
     help='If True, change the markdown file in place',
 )
 @click.option(
+    '--proactive',
+    type=bool,
+    show_default=True,
+    default=True,
+    help='If True, insert a ToC even without placeholders.',
+)
+@click.option(
+    '--add-toc-title',
+    type=bool,
+    show_default=True,
+    default=True,
+    help='If True, add a "**Table of Contents**" heading before entries.',
+)
+@click.option(
+    '--add-horizontal-rules',
+    type=bool,
+    show_default=True,
+    default=True,
+    help='If True, surround ToC entries with horizontal rules.',
+)
+@click.option(
+    '--toc-title',
+    type=str,
+    show_default=True,
+    default='Table of Contents',
+    help='Title text to display when --add-toc-title is enabled.',
+)
+@click.option(
     '--skip-first-n-lines',
     type=int,
     show_default=True,
@@ -100,6 +128,10 @@ def main(
         skip_first_n_lines: int,
         quiet: bool,
         in_place: bool,
+        proactive: bool,
+        add_toc_title: bool,
+        add_horizontal_rules: bool,
+        toc_title: str,
         src: str | None,
         paths: tuple[str, ...],
         style: str,
@@ -128,6 +160,10 @@ def main(
         skip_first_n_lines=skip_first_n_lines,
         quiet=quiet,
         in_place=in_place,
+        proactive=proactive,
+        add_toc_title=add_toc_title,
+        add_horizontal_rules=add_horizontal_rules,
+        toc_title=toc_title,
         style=style,
     )
 
@@ -138,6 +174,10 @@ def _checkPaths(
         skip_first_n_lines: int = 1,
         quiet: bool = False,
         in_place: bool = True,
+        proactive: bool = True,
+        add_toc_title: bool = True,
+        add_horizontal_rules: bool = True,
+        toc_title: str = 'Table of Contents',
         style: str = 'github',
 ) -> None:
     filenames: list[Path] = []
@@ -166,6 +206,10 @@ def _checkPaths(
             skip_first_n_lines=skip_first_n_lines,
             quiet=quiet,
             in_place=in_place,
+            proactive=proactive,
+            add_toc_title=add_toc_title,
+            add_horizontal_rules=add_horizontal_rules,
+            toc_title=toc_title,
             style=style,
         )
 
