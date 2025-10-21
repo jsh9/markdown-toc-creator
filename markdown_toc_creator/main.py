@@ -21,6 +21,9 @@ def validateStyleValue(
         value: str | None,
 ) -> str | None:
     """Validate the value of the 'style' option"""
+    if value is None:
+        return None
+
     if value not in {'github', 'gitlab'}:
         raise click.BadParameter('"--style" must be "github" or "gitlab"')
 

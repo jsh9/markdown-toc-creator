@@ -23,13 +23,13 @@ def testCreateToc(style: str) -> None:
     expected = {
         'github': [
             '- [This header has spaces in it](#this-header-has-spaces-in-it)',
-            '  - [This header has a :thumbsup: in it](#this-header-has-a-thumbsup-in-it)',
-            '- [This header has Unicode in it: 中文](#this-header-has-unicode-in-it-中文)',
-            '  - [This header has spaces in it](#this-header-has-spaces-in-it-1)',
-            '    - [This header has spaces in it](#this-header-has-spaces-in-it-2)',
-            '  - [This header has 3.5 in it (and parentheses)](#this-header-has-35-in-it-and-parentheses)',
-            "    - [What day is today? I don't know.](#what-day-is-today-i-dont-know)",
-            '  - [This header has     consecutive spaces in it](#this-header-has-----consecutive-spaces-in-it)',
+            '  - [This header has a :thumbsup: in it](#this-header-has-a-thumbsup-in-it)',  # noqa: E501
+            '- [This header has Unicode in it: 中文](#this-header-has-unicode-in-it-中文)',  # noqa: E501
+            '  - [This header has spaces in it](#this-header-has-spaces-in-it-1)',  # noqa: E501
+            '    - [This header has spaces in it](#this-header-has-spaces-in-it-2)',  # noqa: E501
+            '  - [This header has 3.5 in it (and parentheses)](#this-header-has-35-in-it-and-parentheses)',  # noqa: E501
+            "    - [What day is today? I don't know.](#what-day-is-today-i-dont-know)",  # noqa: E501
+            '  - [This header has     consecutive spaces in it](#this-header-has-----consecutive-spaces-in-it)',  # noqa: E501
             '    - [Hello _world_](#hello-world)',
             '    - [Hello *world*](#hello-world-1)',
             '    - [Hello __world__](#hello-world-2)',
@@ -39,19 +39,19 @@ def testCreateToc(style: str) -> None:
             '  - [Here is `hello_?and!_world`](#here-is-hello_and_world)',
             '  - [🌻 This is a sunflower](#-this-is-a-sunflower)',
             '  - [This is a link to pypi](#this-is-a-link-to-pypi)',
-            "  - [5. `ABC`,:! There shouldn't be two consecutive dashes here](#5-abc-there-shouldnt-be-two-consecutive-dashes-here)",
+            "  - [5. `ABC`,:! There shouldn't be two consecutive dashes here](#5-abc-there-shouldnt-be-two-consecutive-dashes-here)",  # noqa: E501
             '  - [7. ABC: This is great](#7-abc-this-is-great)',
             '  - [8. DEF:: This is better](#8-def-this-is-better)',
         ],
         'gitlab': [
             '- [This header has spaces in it](#this-header-has-spaces-in-it)',
-            '  - [This header has a :thumbsup: in it](#this-header-has-a-in-it)',
-            '- [This header has Unicode in it: 中文](#this-header-has-unicode-in-it-中文)',
-            '  - [This header has spaces in it](#this-header-has-spaces-in-it-1)',
-            '    - [This header has spaces in it](#this-header-has-spaces-in-it-2)',
-            '  - [This header has 3.5 in it (and parentheses)](#this-header-has-35-in-it-and-parentheses)',
-            "    - [What day is today? I don't know.](#what-day-is-today-i-dont-know)",
-            '  - [This header has     consecutive spaces in it](#this-header-has-consecutive-spaces-in-it)',
+            '  - [This header has a :thumbsup: in it](#this-header-has-a-in-it)',  # noqa: E501
+            '- [This header has Unicode in it: 中文](#this-header-has-unicode-in-it-中文)',  # noqa: E501
+            '  - [This header has spaces in it](#this-header-has-spaces-in-it-1)',  # noqa: E501
+            '    - [This header has spaces in it](#this-header-has-spaces-in-it-2)',  # noqa: E501
+            '  - [This header has 3.5 in it (and parentheses)](#this-header-has-35-in-it-and-parentheses)',  # noqa: E501
+            "    - [What day is today? I don't know.](#what-day-is-today-i-dont-know)",  # noqa: E501
+            '  - [This header has     consecutive spaces in it](#this-header-has-consecutive-spaces-in-it)',  # noqa: E501
             '    - [Hello _world_](#hello-world)',
             '    - [Hello *world*](#hello-world-1)',
             '    - [Hello __world__](#hello-world-2)',
@@ -61,7 +61,7 @@ def testCreateToc(style: str) -> None:
             '  - [Here is `hello_?and!_world`](#here-is-hello_and_world)',
             '  - [🌻 This is a sunflower](#-this-is-a-sunflower)',
             '  - [This is a link to pypi](#this-is-a-link-to-pypi)',
-            "  - [5. `ABC`,:! There shouldn't be two consecutive dashes here](#5-abc-there-shouldnt-be-two-consecutive-dashes-here)",
+            "  - [5. `ABC`,:! There shouldn't be two consecutive dashes here](#5-abc-there-shouldnt-be-two-consecutive-dashes-here)",  # noqa: E501
             '  - [7. ABC: This is great](#7-abc-this-is-great)',
             '  - [8. DEF:: This is better](#8-def-this-is-better)',
         ],
