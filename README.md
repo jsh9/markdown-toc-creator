@@ -22,6 +22,9 @@ ______________________________________________________________________
   - [3.7. `--add-toc-title`](#37---add-toc-title)
   - [3.8. `--toc-title`](#38---toc-title)
   - [3.9. `--add-horizontal-rules`](#39---add-horizontal-rules)
+- [4. Compatibility with other formatters](#4-compatibility-with-other-formatters)
+  - [4.1. With `markdown-heading-numbering`](#41-with-markdown-heading-numbering)
+  - [4.2. With `mdformat`](#42-with-mdformat)
 
 ______________________________________________________________________
 
@@ -134,3 +137,17 @@ This config option has no effect if `--add-toc-title` is `False`.
 If `True` (default), wrap the generated entries between horizontal rules
 (`---`) for additional separation. (The ToC title, if added, will be within the
 horizontal rules)
+
+## 4. Compatibility with other formatters
+
+### 4.1. With [`markdown-heading-numbering`](https://github.com/jsh9/markdown-heading-numbering/)
+
+If you are also using my other markdown formatter
+[`markdown-heading-numbering`](https://github.com/jsh9/markdown-heading-numbering/)
+as a pre-commit hook to for create tables of contents in your markdown files,
+it's better to use that hook **before** this one.
+
+### 4.2. With [`mdformat`](https://github.com/hukkin/mdformat)
+
+This tool is fully compatible with
+[`mdformat`](https://github.com/hukkin/mdformat) as pre-commit hooks.
