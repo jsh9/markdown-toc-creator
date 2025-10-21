@@ -98,7 +98,7 @@ def deduplicateAnchorLinkText(tocEntries: list[TocEntry]) -> None:
         if entry.anchorLinkText in duplicated:
             counter[entry.anchorLinkText] += 1
             count: int = counter[entry.anchorLinkText]
-            if count >= 2:  # we only modify anchor link from the 2nd occurrence
+            if count >= 2:  # we only modify anchor link from 2nd occurrence
                 entry.anchorLinkText += f'-{count - 1}'
 
 
@@ -107,7 +107,7 @@ class _CharGroup:
     chars: list[str]
     insideBacktickPairs: bool
 
-    def __eq__(self, other: '_CharGroup') -> bool:
+    def __eq__(self, other: _CharGroup) -> bool:
         return (
             self.chars == other.chars
             and self.insideBacktickPairs == other.insideBacktickPairs

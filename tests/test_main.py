@@ -74,11 +74,12 @@ def testCreateToc(style: str) -> None:
     ['github', 'gitlab'],
 )
 def testCreateTocWithSpecialUnicodeChars(style: str, tmp_path: Path) -> None:
-    """Test that the tool can handle special Unicode characters like √, ∑, ∫, etc.
+    """
+    Test that the tool can handle special Unicode characters like √, ∑, ∫, etc.
 
     This test ensures that files with mathematical symbols and other special
-    Unicode characters can be written correctly with UTF-8 encoding, fixing
-    the UnicodeEncodeError that occurred on Windows with cp1252 encoding.
+    Unicode characters can be written correctly with UTF-8 encoding, fixing the
+    UnicodeEncodeError that occurred on Windows with cp1252 encoding.
     """
     # Create a test file with special Unicode characters
     test_file = tmp_path / 'test_unicode.md'

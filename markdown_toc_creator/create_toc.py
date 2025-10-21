@@ -21,7 +21,7 @@ def createToc(  # noqa: C901
         print(filename)
         print('')
 
-    with open(filename, 'r', encoding='utf-8') as fp:
+    with open(filename, encoding='utf-8') as fp:
         lines = fp.readlines()
 
     lines = [_[:-1] for _ in lines]  # remove '\n' at the end of each line

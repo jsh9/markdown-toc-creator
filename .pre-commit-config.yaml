@@ -1,31 +1,80 @@
 ---
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
     hooks:
-      - id: isort
-  - repo: https://github.com/jsh9/cercis
-    rev: 0.2.5
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        exclude: \.json$|\.ipynb$
+      - id: debug-statements
+      - id: double-quote-string-fixer
+      - id: requirements-txt-fixer
+        exclude: \.ipynb$
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-toml
+      - id: check-yaml
+      - id: name-tests-test
+        args: [--pytest-test-first]
+        exclude: ^tests/test_data/|^tests/helpers\.py$
+      - id: check-merge-conflict
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
     hooks:
-      - id: cercis
+      - id: pyupgrade
+        args: [--py310-plus]
+  - repo: https://github.com/jsh9/muff-pre-commit
+    rev: 0.13.2
+    hooks:
+      - id: muff-format
+        args: [--config, muff.toml]
+  - repo: https://github.com/jsh9/blank-line-after-blocks
+    rev: 0.1.4
+    hooks:
+      - id: blank-line-after-blocks
+      - id: blank-line-after-blocks-jupyter
   - repo: https://github.com/lyz-code/yamlfix
     rev: 1.18.0
     hooks:
       - id: yamlfix
-        exclude: ^tests/data/
   - repo: https://github.com/hukkin/mdformat
-    rev: 0.7.22
+    rev: 1.0.0
     hooks:
       - id: mdformat
         args: [--wrap, '79', --number]
-        additional_dependencies: [mdformat-tables]
-        exclude: ^tests/data/
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+        additional_dependencies: [mdformat-gfm]
+        exclude: ^tests/test_data/
+  - repo: https://github.com/jsh9/format-json
+    rev: 0.1.2
     hooks:
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-  - repo: https://github.com/pre-commit/pre-commit
-    rev: v4.0.1
+      - id: format-json
+        args:
+          - --autofix
+          - --no-ensure-ascii
+          - --indent=4
+          - --no-sort-keys
+          - --no-eof-newline
+  - repo: local
     hooks:
-      - id: validate_manifest
+      - id: markdown-toc-creator
+        name: Format self (markdown table of contents)
+        entry: python
+        args: [-m, markdown_toc_creator.main]
+        language: python
+        types: [markdown]
+        exclude: ^tests/test_data
+        additional_dependencies: [click>=8.0.0, beautifulsoup4>=4.12.0]
+  - repo: https://github.com/jsh9/markdown-heading-numbering
+    rev: 0.1.0
+    hooks:
+      - id: markdown-heading-numbering
+        exclude: ^CHANGELOG\.md$|^tests/test_data/
+  - repo: https://github.com/jsh9/format-docstring
+    rev: 0.2.2
+    hooks:
+      - id: format-docstring
+        name: Format docstrings in .py files
+        args: [--line-length=79]
+      - id: format-docstring-jupyter
+        name: Format docstrings in .ipynb files
+        args: [--line-length=79]
