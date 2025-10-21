@@ -27,6 +27,3 @@ markdown-toc-creator = "markdown_toc_creator.main:main"
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "testing*"]
-
-[tool.setuptools.bdist_wheel]
-universal = true
