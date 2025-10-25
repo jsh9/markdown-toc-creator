@@ -75,6 +75,11 @@ def createToc(  # noqa: C901
 
             prevLevel = thisLevel
 
+    if proactive and (not hasInsertionPoint) and not tocEntries:
+        # Proactive mode should not create ToCs without headings beyond the
+        # skipped lines
+        return []
+
     deduplicateAnchorLinkText(tocEntries=tocEntries)
 
     tocLines: list[str] = [_.render() for _ in tocEntries]

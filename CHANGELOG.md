@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.1.1] - 2025-10-25
+
+- Fixed
+  - A bug where ToC placeholders, titles, etc. are generated when there are no
+    ToC to generate
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.1.0...0.1.1
+
 ## [0.1.0] - 2025-10-21
 
 - Added
