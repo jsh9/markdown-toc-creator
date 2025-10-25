@@ -129,6 +129,11 @@ def _count_placeholders(content: str) -> int:
             'no_heading_default.md',
             [],
         ),
+        (
+            'no_heading_below_skip.md',
+            'no_heading_below_skip.md',
+            ['--skip-first-n-lines', '1'],
+        ),
         ('with_placeholder.md', 'with_placeholder_default.md', []),
         (
             'with_placeholder.md',
@@ -163,6 +168,7 @@ def _count_placeholders(content: str) -> int:
         'heading-minimal',
         'extras-default',
         'no-heading-default',
+        'no-heading-below-skip',
         'placeholder-default',
         'placeholder-no-title',
         'placeholder-no-rules',
