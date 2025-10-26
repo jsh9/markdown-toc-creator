@@ -81,10 +81,11 @@ def _assert_cli_result(
         before_filename: str,
         after_filename: str,
         cli_args: list[str],
+        after_dir: str = 'after',
 ) -> None:
     runner = CliRunner()
     before_path = base_dir / 'before' / before_filename
-    expected_path = base_dir / 'after' / after_filename
+    expected_path = base_dir / after_dir / after_filename
     target = tmp_path / before_path.name
     copyfile(before_path, target)
 
@@ -308,18 +309,32 @@ def test_cli_add_toc_title_option(
         'proactive-off-no-title',
     ],
 )
+@pytest.mark.parametrize(
+    ('after_dir', 'style_args'),
+    [
+        pytest.param('after_mdformat', [], id='mdformat'),
+        pytest.param(
+            'after_prettier',
+            ['--horizontal-rule-style', 'prettier'],
+            id='prettier',
+        ),
+    ],
+)
 def test_cli_add_horizontal_rules_option(
         tmp_path: Path,
         before_filename: str,
         after_filename: str,
         cli_args: list[str],
+        after_dir: str,
+        style_args: list[str],
 ) -> None:
     _assert_cli_result(
         tmp_path=tmp_path,
         base_dir=ADD_HORIZONTAL_RULES_DATA,
         before_filename=before_filename,
         after_filename=after_filename,
-        cli_args=cli_args,
+        cli_args=[*cli_args, *style_args],
+        after_dir=after_dir,
     )
 
 
@@ -457,7 +472,7 @@ Emoji test.
 ## Mixed: √(x²+y²) ≈ 10
 
 Mathematical expression.
-"""
+"""  # noqa: RUF001
     test_file.write_text(content, encoding='utf-8')
 
     # Run createToc with in_place=True to test writing
@@ -474,7 +489,7 @@ Mathematical expression.
 
     # Verify TOC was created and contains Unicode characters
     assert '## Mathematical symbols: √ ∑ ∫ ∞' in result
-    assert '## Greek letters: α β γ δ' in result
+    assert '## Greek letters: α β γ δ' in result  # noqa: RUF001
     assert '## Special symbols: ™ © ® ±' in result
     assert '## Mixed: √(x²+y²) ≈ 10' in result
 
@@ -482,14 +497,14 @@ Mathematical expression.
     expected = {
         'github': [
             '- [Mathematical symbols: √ ∑ ∫ ∞](#mathematical-symbols---)',
-            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',
+            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',  # noqa: RUF001
             '- [Special symbols: ™ © ® ±](#special-symbols---)',
             '- [Emoji and Unicode: 🚀 ✨ ❤️](#emoji-and-unicode--)',
             '- [Mixed: √(x²+y²) ≈ 10](#mixed-x²y²--10)',
         ],
         'gitlab': [
             '- [Mathematical symbols: √ ∑ ∫ ∞](#mathematical-symbols)',
-            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',
+            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',  # noqa: RUF001
             '- [Special symbols: ™ © ® ±](#special-symbols)',
             '- [Emoji and Unicode: 🚀 ✨ ❤️](#emoji-and-unicode)',
             '- [Mixed: √(x²+y²) ≈ 10](#mixed-x²y²-10)',

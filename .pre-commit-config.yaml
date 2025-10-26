@@ -18,11 +18,6 @@ repos:
         args: [--pytest-test-first]
         exclude: ^tests/test_data/|^tests/helpers\.py$
       - id: check-merge-conflict
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.20.0
-    hooks:
-      - id: pyupgrade
-        args: [--py310-plus]
   - repo: https://github.com/jsh9/muff-pre-commit
     rev: 0.13.2
     hooks:
@@ -37,6 +32,22 @@ repos:
     rev: 1.18.0
     hooks:
       - id: yamlfix
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.24.2
+    hooks:
+      - id: toml-sort-fix
+        args:
+          - --in-place
+          - --sort-table-keys
+          - --sort-inline-tables
+          - --sort-first=name,version,dependencies,requires-python,authors,maintainers
+          - --trailing-comma-inline-array
+          - --sort-inline-arrays
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.15.0
+    hooks:
+      - id: pretty-format-ini
+        args: [--autofix]
   - repo: https://github.com/hukkin/mdformat
     rev: 1.0.0
     hooks:

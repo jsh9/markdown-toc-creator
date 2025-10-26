@@ -100,11 +100,13 @@ def deduplicateAnchorLinkText(tocEntries: list[TocEntry]) -> None:
 
     counter: defaultdict[str, int] = defaultdict(int)
 
+    which_occurrence_to_start_fixing_anchor_link: int = 2
+
     for entry in tocEntries:
         if entry.anchorLinkText in duplicated:
             counter[entry.anchorLinkText] += 1
             count: int = counter[entry.anchorLinkText]
-            if count >= 2:  # we only modify anchor link from 2nd occurrence
+            if count >= which_occurrence_to_start_fixing_anchor_link:
                 entry.anchorLinkText += f'-{count - 1}'
 
 
@@ -121,6 +123,9 @@ class _CharGroup:
             self.chars == other.chars
             and self.insideBacktickPairs == other.insideBacktickPairs
         )
+
+    def __hash__(self) -> int:
+        return hash((tuple(self.chars), self.insideBacktickPairs))
 
     def reduceToOnlyOneLeadingNonAlphaNumericChars(self) -> None:
         """Reduce to only 1 leading non-alphanumeric characters"""
@@ -153,10 +158,7 @@ def _isWordChar(char: str) -> bool:
     if unicodedata.category(char) == 'So':  # "Symbol, other", i.e., emoji
         return True
 
-    if unicodedata.category(char).startswith('L'):  # letters of any script
-        return True
-
-    return False
+    return unicodedata.category(char).startswith('L')  # letters of any script
 
 
 def _buildListOfCharGroups(string: str) -> list[_CharGroup]:

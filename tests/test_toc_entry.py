@@ -10,7 +10,7 @@ from markdown_toc_creator.toc_entry import (
 
 
 @pytest.mark.parametrize(
-    'string, expected',
+    ('string', 'expected'),
     [
         (
             'something',
@@ -107,19 +107,19 @@ def testBuildListOfCharGroups(string: str, expected: list[_CharGroup]) -> None:
     assert result == expected
 
 
-def test_link_removal():
+def test_link_removal() -> None:
     entry = TocEntry('hello world [somelink](https://foo.bar)', '', 'github')
     assert entry.render() == '- [hello world somelink](#hello-world-somelink)'
 
 
-def test_emoji_at_beginning():
+def test_emoji_at_beginning() -> None:
     entry = TocEntry('🐧 hello world', '', 'github')
     assert entry.anchorLinkText == '#-hello-world'
     assert entry.render() == '- [🐧 hello world](#-hello-world)'
 
 
 @pytest.mark.parametrize(
-    'oldChars, expectedChars',
+    ('oldChars', 'expectedChars'),
     [
         ('', ''),
         ('    ', ' '),

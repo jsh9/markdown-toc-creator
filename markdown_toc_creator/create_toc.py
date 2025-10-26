@@ -2,19 +2,24 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from markdown_toc_creator.exceptions import HeaderLevelNotContinuousException
+from markdown_toc_creator.exceptions import HeaderLevelNotContinuousError
 from markdown_toc_creator.toc_entry import TocEntry, deduplicateAnchorLinkText
 
 TOC_TAG = '<!--TOC-->'
 
-# 70 underscores, which is the default style
-# of mdformat (https://github.com/hukkin/mdformat):
-# https://mdformat.readthedocs.io/en/stable/users/style.html#thematic-breaks
-HORIZONTAL_RULE = '_' * 70
+DEFAULT_HORIZONTAL_RULE_STYLE: str = 'mdformat'
+HORIZONTAL_RULE_STYLES: dict[str, str] = {
+    # 70 underscores, which is the default style of mdformat:
+    # https://mdformat.readthedocs.io/en/stable/users/style.html#thematic-breaks
+    'mdformat': '_' * 70,
+    # Matches Prettier's default thematic break:
+    'prettier': '---',
+}
 
 
-def createToc(  # noqa: C901
+def createToc(  # noqa: C901, PLR0915
         filename: Path,
+        *,
         skip_first_n_lines: int = 1,
         quiet: bool = False,
         in_place: bool = True,
@@ -23,14 +28,16 @@ def createToc(  # noqa: C901
         add_horizontal_rules: bool = True,
         toc_title: str = 'Table of Contents',
         style: str = 'github',
+        horizontal_rule_style: str = DEFAULT_HORIZONTAL_RULE_STYLE,
 ) -> list[str]:
     """Create table of content"""
     if not quiet:
         print('----------------------')
         print(filename)
-        print('')
+        print()
 
-    with open(filename, encoding='utf-8') as fp:
+    lines: list[str]
+    with Path(filename).open(encoding='utf-8') as fp:
         lines = fp.readlines()
 
     lines = [_[:-1] for _ in lines]  # remove '\n' at the end of each line
@@ -61,12 +68,12 @@ def createToc(  # noqa: C901
                 prevLevel = thisLevel
 
             if thisLevel < initialLevel:
-                raise HeaderLevelNotContinuousException(f'"{line}"')
+                raise HeaderLevelNotContinuousError(f'"{line}"')
 
             if thisLevel - prevLevel > 1:
                 print(thisLevel)
                 print(prevLevel)
-                raise HeaderLevelNotContinuousException(f'"{line}"')
+                raise HeaderLevelNotContinuousError(f'"{line}"')
 
             absoluteLevelDiff: int = thisLevel - initialLevel
             indent = absoluteLevelDiff * '  '
@@ -88,7 +95,9 @@ def createToc(  # noqa: C901
         for entry in tocEntries:
             print(entry.render())
 
+    final: list[str]
     if in_place:
+        horizontal_rule: str = _resolve_horizontal_rule(horizontal_rule_style)
         if hasInsertionPoint:
             start, end = findTocInsertionPoint(lines)
             innerContent = _buildInnerTocContent(
@@ -96,10 +105,11 @@ def createToc(  # noqa: C901
                 add_toc_title=add_toc_title,
                 add_horizontal_rules=add_horizontal_rules,
                 toc_title=toc_title,
+                horizontal_rule=horizontal_rule,
             )
-            prefix = lines[:start]
-            suffix = lines[end + 1 :]
-            final = prefix + [TOC_TAG] + innerContent + [TOC_TAG] + suffix
+            prefix: list[str] = lines[:start]
+            suffix: list[str] = lines[end + 1 :]
+            final = [*prefix, TOC_TAG, *innerContent, TOC_TAG, *suffix]
         else:
             final = _insertTocWithoutPlaceholder(
                 lines=lines,
@@ -107,9 +117,10 @@ def createToc(  # noqa: C901
                 add_toc_title=add_toc_title,
                 add_horizontal_rules=add_horizontal_rules,
                 toc_title=toc_title,
+                horizontal_rule=horizontal_rule,
             )
 
-        with open(filename, 'w', encoding='utf-8') as fp:
+        with Path(filename).open('w', encoding='utf-8') as fp:
             fp.writelines([_ + '\n' for _ in final])
 
     return tocLines
@@ -122,7 +133,8 @@ def hasTocInsertionPoint(textLines: list[str]) -> bool:
         if line == TOC_TAG:
             tagCounter += 1
 
-    return tagCounter >= 2
+    min_required_tags_to_quality_as_an_insertion_point = 2
+    return tagCounter >= min_required_tags_to_quality_as_an_insertion_point
 
 
 def findTocInsertionPoint(textLine: list[str]) -> tuple[int, int]:
@@ -164,19 +176,19 @@ def _findFirstNonEmptyLine(lines: list[str]) -> int | None:
 
 def _buildInnerTocContent(
         tocLines: list[str],
+        *,
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
+        horizontal_rule: str,
 ) -> list[str]:
     content: list[str] = ['']
 
     if add_horizontal_rules:
-        content.append(HORIZONTAL_RULE)
-        content.append('')
+        content.extend((horizontal_rule, ''))
 
     if add_toc_title:
-        content.append(f'**{toc_title}**')
-        content.append('')
+        content.extend((f'**{toc_title}**', ''))
 
     if tocLines:
         content.extend(tocLines)
@@ -185,41 +197,46 @@ def _buildInnerTocContent(
         content.append('')
 
     if add_horizontal_rules:
-        content.append(HORIZONTAL_RULE)
-        content.append('')
+        content.extend((horizontal_rule, ''))
 
     return content
 
 
 def _buildProactiveBlock(
+        *,
         tocLines: list[str],
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
+        horizontal_rule: str,
 ) -> list[str]:
     innerContent = _buildInnerTocContent(
         tocLines=tocLines,
         add_toc_title=add_toc_title,
         add_horizontal_rules=add_horizontal_rules,
         toc_title=toc_title,
+        horizontal_rule=horizontal_rule,
     )
-    return [TOC_TAG] + innerContent + [TOC_TAG]
+    return [TOC_TAG, *innerContent, TOC_TAG]
 
 
 def _insertTocWithoutPlaceholder(
+        *,
         lines: list[str],
         tocLines: list[str],
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
+        horizontal_rule: str,
 ) -> list[str]:
     tocSection = _buildProactiveBlock(
         tocLines=tocLines,
         add_toc_title=add_toc_title,
         add_horizontal_rules=add_horizontal_rules,
         toc_title=toc_title,
+        horizontal_rule=horizontal_rule,
     )
-    blockWithSpacing = [''] + tocSection
+    blockWithSpacing = ['', *tocSection]
 
     firstNonEmptyIndex = _findFirstNonEmptyLine(lines)
     if firstNonEmptyIndex is None:
@@ -231,3 +248,13 @@ def _insertTocWithoutPlaceholder(
         return lines[:insertPos] + blockWithSpacing + lines[insertPos:]
 
     return blockWithSpacing + lines
+
+
+def _resolve_horizontal_rule(style: str) -> str:
+    try:
+        return HORIZONTAL_RULE_STYLES[style]
+    except KeyError as exc:
+        raise ValueError(
+            '"--horizontal-rule-style" must be one of'
+            f' {sorted(HORIZONTAL_RULE_STYLES)}'
+        ) from exc

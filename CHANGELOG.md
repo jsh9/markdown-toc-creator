@@ -1,5 +1,17 @@
 # Change Log
 
+# Change Log
+
+## [0.1.2] - 2025-10-26
+
+- Added
+  - New `--horizontal-rule-style` CLI option to switch between 70 underscores
+    (mdformat) and `---` (Prettier) when horizontal rules are enabled.
+- Changed
+  - Horizontal-rule fixtures now cover both mdformat and Prettier outputs.
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.1.1...0.1.2
+
 ## [0.1.1] - 2025-10-25
 
 - Fixed
