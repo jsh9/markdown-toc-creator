@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from markdown_toc_creator.exceptions import HeaderLevelNotContinuousError
+from markdown_toc_creator.exceptions import (
+    HeaderLevelNotContinuousError,
+    HeaderLevelOutOfBoundError,
+)
 from markdown_toc_creator.toc_entry import TocEntry, deduplicateAnchorLinkText
 
 TOC_TAG = '<!--TOC-->'
@@ -52,6 +55,7 @@ def createToc(  # noqa: C901, PLR0915
     isInitialHeader: bool = True
     tocEntries: list[TocEntry] = []
     inCodeBlock: bool = False
+    errMsg: str
 
     for i, line in enumerate(lines):
         if line.strip().startswith('```'):
@@ -68,12 +72,30 @@ def createToc(  # noqa: C901, PLR0915
                 prevLevel = thisLevel
 
             if thisLevel < initialLevel:
-                raise HeaderLevelNotContinuousError(f'"{line}"')
+                errMsg = (
+                    f'{filename.as_posix()}:{i + 1}:'
+                    f'\n    Header level of Line {i + 1} ("{line}") is'
+                    f' {thisLevel},'
+                    ' higher than the initial header level of the document'
+                    f' body (which is {initialLevel}). A table of contents'
+                    " can't be correctly generated in this case. You may want"
+                    ' to reduce the `--skip-first-n-lines` config option to'
+                    ' skip fewer lines at the beginning of this file. Or you'
+                    f' can adjust the header level at Line {i + 1}.'
+                )
+                raise HeaderLevelOutOfBoundError(errMsg)
 
             if thisLevel - prevLevel > 1:
-                print(thisLevel)
-                print(prevLevel)
-                raise HeaderLevelNotContinuousError(f'"{line}"')
+                errMsg = (
+                    f'{filename.as_posix()}:{i + 1}:'
+                    f'\n    Header level of Line {i + 1} ("{line}") is'
+                    f' {thisLevel}, which is {thisLevel - prevLevel} lower'
+                    f' than the previous level (which is {prevLevel}). To'
+                    f' correctly create a table of contents, header levels'
+                    f' shall not skip several levels downwards (but it can'
+                    f' skip several levels upwards).'
+                )
+                raise HeaderLevelNotContinuousError(errMsg)
 
             absoluteLevelDiff: int = thisLevel - initialLevel
             indent = absoluteLevelDiff * '  '

@@ -1,16 +1,17 @@
 # Repository Summary
 
-- CLI tool `markdown_toc_creator` builds Markdown tables of contents either
-  in-place or via stdout.
-- `main.py` wires the Click-based interface, walks provided paths, filters
-  markdown files, and delegates to `createToc`; options include proactive
-  inserts, toggles for ToC title/horizontal rules, and a customizable
-  `--toc-title` string.
-- `create_toc.py` parses headings, enforces header-level continuity, renders
-  indented links with optional GitHub/GitLab styles, writes content between
-  `<!--TOC-->` tags, and keeps runs idempotent by refreshing existing
-  placeholders in place.
-- `toc_entry.py` encapsulates anchor generation, deduplication, and rendering
-  rules; tested via `tests/test_toc_entry.py`.
-- Automated coverage relies on `pytest` suites in `tests/`, while packaging
-  metadata lives in `pyproject.toml` with optional `tox` workflows.
+- CLI tool `markdown_toc_creator` generates Markdown tables of contents either
+  in-place (default) or via stdout, making it suitable for scripts or CI.
+- `markdown_toc_creator/main.py` exposes a Click CLI that discovers markdown
+  files (with `--exclude`, `--skip-first-n-lines`, proactive insertion, stdout
+  vs in-place, quiet mode) and forwards configuration to the ToC builder.
+- `markdown_toc_creator/create_toc.py` parses headings, validates level flow,
+  applies GitHub/GitLab anchor styles, renders indented entries, and refreshes
+  the `<!--TOC-->` blocks with optional titles and horizontal rules that match
+  mdformat or Prettier.
+- `markdown_toc_creator/toc_entry.py` encapsulates anchor creation,
+  deduplication, and text rendering; edge cases are covered by
+  `tests/test_toc_entry.py`, while CLI behaviour lives in `tests/test_main.py`.
+- `pyproject.toml` defines the package metadata, dependencies, CLI entry point,
+  and dev extras; `tox.ini` and `requirements.dev` support lint/test workflows,
+  and `.pre-commit-config.yaml` offers local hook integration.

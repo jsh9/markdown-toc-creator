@@ -1,5 +1,5 @@
 from pathlib import Path
-from shutil import copyfile
+from shutil import copyfile, copytree
 
 import pytest
 from click.testing import CliRunner
@@ -12,6 +12,7 @@ PROACTIVE_DATA = DATA_DIR / 'proactive'
 ADD_TOC_TITLE_DATA = DATA_DIR / 'add_toc_title'
 ADD_HORIZONTAL_RULES_DATA = DATA_DIR / 'add_horizontal_rules'
 TOC_TITLE_DATA = DATA_DIR / 'toc_title'
+FAILURE_MIXED_DATA = DATA_DIR / '2_failures_and_1_success'
 
 
 @pytest.mark.parametrize(
@@ -431,6 +432,50 @@ def test_cli_multiple_runs_default_idempotent(tmp_path: Path) -> None:
     final_content = target.read_text(encoding='utf-8')
     assert _count_placeholders(final_content) == 2
     assert final_content == expected.read_text(encoding='utf-8')
+
+
+def test_cli_reports_errors_without_stopping(tmp_path: Path) -> None:
+    runner = CliRunner()
+    dataset = tmp_path / 'mixed'
+    copytree(FAILURE_MIXED_DATA / 'before', dataset)
+
+    result = runner.invoke(main, [str(dataset)])
+    assert result.exit_code == 1
+    not_continuous_path = dataset / 'header_level_not_continuous.md'
+    out_of_bounds_path = dataset / 'header_level_out_of_bounds.md'
+
+    expected_not_continuous_message = (
+        f'{not_continuous_path.as_posix()}:11:\n'
+        '    Header level of Line 11 ("#### Skipped Level") is 4,'
+        ' which is 2 lower than the previous level (which is 2). To'
+        ' correctly create a table of contents, header levels shall'
+        ' not skip several levels downwards (but it can skip several'
+        ' levels upwards).'
+    )
+    expected_out_of_bounds_message = (
+        f'{out_of_bounds_path.as_posix()}:13:\n'
+        '    Header level of Line 13 ("# Back To Start") is 1, higher'
+        ' than the initial header level of the document body (which is 2).'
+        " A table of contents can't be correctly generated in this case."
+        ' You may want to reduce the `--skip-first-n-lines` config option'
+        ' to skip fewer lines at the beginning of this file. Or you can'
+        ' adjust the header level at Line 13.'
+    )
+
+    assert expected_not_continuous_message in result.output
+    assert expected_out_of_bounds_message in result.output
+
+    expected_success = FAILURE_MIXED_DATA / 'after' / 'success.md'
+    actual_success = dataset / 'success.md'
+    assert actual_success.read_text(
+        encoding='utf-8'
+    ) == expected_success.read_text(encoding='utf-8')
+
+    for source in (not_continuous_path, out_of_bounds_path):
+        expected_file = FAILURE_MIXED_DATA / 'after' / source.name
+        assert source.read_text(encoding='utf-8') == expected_file.read_text(
+            encoding='utf-8'
+        )
 
 
 @pytest.mark.parametrize(

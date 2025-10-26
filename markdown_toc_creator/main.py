@@ -10,6 +10,10 @@ from markdown_toc_creator.create_toc import (
     DEFAULT_HORIZONTAL_RULE_STYLE,
     createToc,
 )
+from markdown_toc_creator.exceptions import (
+    HeaderLevelNotContinuousError,
+    HeaderLevelOutOfBoundError,
+)
 
 # Due to a potential bug in Windows + pre-commit, non-ASCII
 # characters cannot be rendered correctly as stdout in the terminal.
@@ -38,6 +42,13 @@ def validateStyleValue(
     help='Create table of contents for markdown files',
 )
 @click.option(
+    '--proactive',
+    type=bool,
+    show_default=True,
+    default=True,
+    help='If True, insert a ToC even without placeholders.',
+)
+@click.option(
     '--exclude',
     type=str,
     show_default=True,
@@ -62,13 +73,6 @@ def validateStyleValue(
     show_default=True,
     default=True,
     help='If True, change the markdown file in place',
-)
-@click.option(
-    '--proactive',
-    type=bool,
-    show_default=True,
-    default=True,
-    help='If True, insert a ToC even without placeholders.',
 )
 @click.option(
     '--add-toc-title',
@@ -166,7 +170,7 @@ def main(
         )
         ctx.exit(1)
 
-    _checkPaths(
+    exit_code = _checkPaths(
         paths,
         exclude=exclude,
         skip_first_n_lines=skip_first_n_lines,
@@ -179,6 +183,7 @@ def main(
         style=style,
         horizontal_rule_style=horizontal_rule_style.lower(),
     )
+    ctx.exit(exit_code)
 
 
 def _checkPaths(
@@ -194,7 +199,7 @@ def _checkPaths(
         toc_title: str = 'Table of Contents',
         style: str = 'github',
         horizontal_rule_style: str = DEFAULT_HORIZONTAL_RULE_STYLE,
-) -> None:
+) -> int:
     filenames: list[Path] = []
 
     if not quiet:
@@ -212,22 +217,46 @@ def _checkPaths(
         elif path.is_dir():
             filenames.extend(sorted(path.rglob('*.md')))
 
+    errors: list[str] = []
+
     for filename in filenames:
         if excludePattern.search(filename.as_posix()):
             continue
 
-        createToc(
-            filename,
-            skip_first_n_lines=skip_first_n_lines,
-            quiet=quiet,
-            in_place=in_place,
-            proactive=proactive,
-            add_toc_title=add_toc_title,
-            add_horizontal_rules=add_horizontal_rules,
-            toc_title=toc_title,
-            style=style,
-            horizontal_rule_style=horizontal_rule_style,
+        try:
+            createToc(
+                filename,
+                skip_first_n_lines=skip_first_n_lines,
+                quiet=quiet,
+                in_place=in_place,
+                proactive=proactive,
+                add_toc_title=add_toc_title,
+                add_horizontal_rules=add_horizontal_rules,
+                toc_title=toc_title,
+                style=style,
+                horizontal_rule_style=horizontal_rule_style,
+            )
+        except (
+            HeaderLevelNotContinuousError,
+            HeaderLevelOutOfBoundError,
+        ) as err:
+            errors.append(str(err))
+
+    if errors:
+        click.echo(
+            click.style(
+                'Encountered errors while generating tables of contents:',
+                fg='red',
+                bold=True,
+            ),
+            err=echoAsError,
         )
+        for message in errors:
+            click.echo(click.style(message + '\n', fg='red'), err=echoAsError)
+
+        return 1
+
+    return 0
 
 
 if __name__ == '__main__':
