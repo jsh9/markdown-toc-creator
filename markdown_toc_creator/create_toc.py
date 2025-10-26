@@ -36,6 +36,7 @@ def createToc(  # noqa: C901, PLR0915
         print(filename)
         print()
 
+    lines: list[str]
     with Path(filename).open(encoding='utf-8') as fp:
         lines = fp.readlines()
 
@@ -94,6 +95,7 @@ def createToc(  # noqa: C901, PLR0915
         for entry in tocEntries:
             print(entry.render())
 
+    final: list[str]
     if in_place:
         horizontal_rule: str = _resolve_horizontal_rule(horizontal_rule_style)
         if hasInsertionPoint:
@@ -105,9 +107,9 @@ def createToc(  # noqa: C901, PLR0915
                 toc_title=toc_title,
                 horizontal_rule=horizontal_rule,
             )
-            prefix = lines[:start]
-            suffix = lines[end + 1 :]
-            final = prefix + [TOC_TAG, *innerContent, TOC_TAG] + suffix
+            prefix: list[str] = lines[:start]
+            suffix: list[str] = lines[end + 1 :]
+            final = [*prefix, TOC_TAG, *innerContent, TOC_TAG, *suffix]
         else:
             final = _insertTocWithoutPlaceholder(
                 lines=lines,
