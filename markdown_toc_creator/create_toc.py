@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from markdown_toc_creator.exceptions import HeaderLevelNotContinuousException
+from markdown_toc_creator.exceptions import HeaderLevelNotContinuousError
 from markdown_toc_creator.toc_entry import TocEntry, deduplicateAnchorLinkText
 
 TOC_TAG = '<!--TOC-->'
@@ -66,12 +66,12 @@ def createToc(  # noqa: C901
                 prevLevel = thisLevel
 
             if thisLevel < initialLevel:
-                raise HeaderLevelNotContinuousException(f'"{line}"')
+                raise HeaderLevelNotContinuousError(f'"{line}"')
 
             if thisLevel - prevLevel > 1:
                 print(thisLevel)
                 print(prevLevel)
-                raise HeaderLevelNotContinuousException(f'"{line}"')
+                raise HeaderLevelNotContinuousError(f'"{line}"')
 
             absoluteLevelDiff: int = thisLevel - initialLevel
             indent = absoluteLevelDiff * '  '
