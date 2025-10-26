@@ -472,7 +472,7 @@ Emoji test.
 ## Mixed: √(x²+y²) ≈ 10
 
 Mathematical expression.
-"""
+"""  # noqa: RUF001
     test_file.write_text(content, encoding='utf-8')
 
     # Run createToc with in_place=True to test writing
@@ -489,7 +489,7 @@ Mathematical expression.
 
     # Verify TOC was created and contains Unicode characters
     assert '## Mathematical symbols: √ ∑ ∫ ∞' in result
-    assert '## Greek letters: α β γ δ' in result
+    assert '## Greek letters: α β γ δ' in result  # noqa: RUF001
     assert '## Special symbols: ™ © ® ±' in result
     assert '## Mixed: √(x²+y²) ≈ 10' in result
 
@@ -497,14 +497,14 @@ Mathematical expression.
     expected = {
         'github': [
             '- [Mathematical symbols: √ ∑ ∫ ∞](#mathematical-symbols---)',
-            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',
+            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',  # noqa: RUF001
             '- [Special symbols: ™ © ® ±](#special-symbols---)',
             '- [Emoji and Unicode: 🚀 ✨ ❤️](#emoji-and-unicode--)',
             '- [Mixed: √(x²+y²) ≈ 10](#mixed-x²y²--10)',
         ],
         'gitlab': [
             '- [Mathematical symbols: √ ∑ ∫ ∞](#mathematical-symbols)',
-            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',
+            '- [Greek letters: α β γ δ](#greek-letters-α-β-γ-δ)',  # noqa: RUF001
             '- [Special symbols: ™ © ® ±](#special-symbols)',
             '- [Emoji and Unicode: 🚀 ✨ ❤️](#emoji-and-unicode)',
             '- [Mixed: √(x²+y²) ≈ 10](#mixed-x²y²-10)',

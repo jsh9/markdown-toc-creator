@@ -74,6 +74,11 @@ ignore = [
   "D200",
   "D205",
   "D400",
+  "N802", # This project uses camelCase.
+  "N803", # These "N" codes are related to variable/module naming
+  "N806",
+  "N812",
+  "N816",
   "PLC1901", # it's fine to compare with empty string
   "S101", # it's fine to use assert
   "S110", # it's fine to use "try-except-pass"
@@ -99,9 +104,7 @@ max-complexity = 14
 extend-ignore-names = [
   # glob patterns, not regex
   "*LLM_*",
-  "*LaaJ_*",
   "*_LLM*",
-  "*_LaaJ*",
 ]
 
 [lint.per-file-ignores]
