@@ -33,9 +33,9 @@ def createToc(  # noqa: C901
     if not quiet:
         print('----------------------')
         print(filename)
-        print('')
+        print()
 
-    with open(filename, encoding='utf-8') as fp:
+    with Path(filename).open(encoding='utf-8') as fp:
         lines = fp.readlines()
 
     lines = [_[:-1] for _ in lines]  # remove '\n' at the end of each line
@@ -117,7 +117,7 @@ def createToc(  # noqa: C901
                 horizontal_rule=horizontal_rule,
             )
 
-        with open(filename, 'w', encoding='utf-8') as fp:
+        with Path(filename).open('w', encoding='utf-8') as fp:
             fp.writelines([_ + '\n' for _ in final])
 
     return tocLines
