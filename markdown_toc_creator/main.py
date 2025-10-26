@@ -6,7 +6,10 @@ from pathlib import Path
 import click
 
 from markdown_toc_creator import __version__
-from markdown_toc_creator.create_toc import createToc
+from markdown_toc_creator.create_toc import (
+    DEFAULT_HORIZONTAL_RULE_STYLE,
+    createToc,
+)
 
 # Due to a potential bug in Windows + pre-commit, non-ASCII
 # characters cannot be rendered correctly as stdout in the terminal.
@@ -82,6 +85,13 @@ def validateStyleValue(
     help='If True, surround ToC entries with horizontal rules.',
 )
 @click.option(
+    '--horizontal-rule-style',
+    type=click.Choice(['mdformat', 'prettier'], case_sensitive=False),
+    show_default=True,
+    default=DEFAULT_HORIZONTAL_RULE_STYLE,
+    help='Choose the thematic break format when --add-horizontal-rules is on.',
+)
+@click.option(
     '--toc-title',
     type=str,
     show_default=True,
@@ -135,6 +145,7 @@ def main(
         src: str | None,
         paths: tuple[str, ...],
         style: str,
+        horizontal_rule_style: str,
 ):
     """Command-line entry point"""
     ctx.ensure_object(dict)
@@ -165,6 +176,7 @@ def main(
         add_horizontal_rules=add_horizontal_rules,
         toc_title=toc_title,
         style=style,
+        horizontal_rule_style=horizontal_rule_style.lower(),
     )
 
 
@@ -179,6 +191,7 @@ def _checkPaths(
         add_horizontal_rules: bool = True,
         toc_title: str = 'Table of Contents',
         style: str = 'github',
+        horizontal_rule_style: str = DEFAULT_HORIZONTAL_RULE_STYLE,
 ) -> None:
     filenames: list[Path] = []
 
@@ -211,6 +224,7 @@ def _checkPaths(
             add_horizontal_rules=add_horizontal_rules,
             toc_title=toc_title,
             style=style,
+            horizontal_rule_style=horizontal_rule_style,
         )
 
 

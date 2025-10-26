@@ -7,10 +7,14 @@ from markdown_toc_creator.toc_entry import TocEntry, deduplicateAnchorLinkText
 
 TOC_TAG = '<!--TOC-->'
 
-# 70 underscores, which is the default style
-# of mdformat (https://github.com/hukkin/mdformat):
-# https://mdformat.readthedocs.io/en/stable/users/style.html#thematic-breaks
-HORIZONTAL_RULE = '_' * 70
+DEFAULT_HORIZONTAL_RULE_STYLE: str = 'mdformat'
+HORIZONTAL_RULE_STYLES: dict[str, str] = {
+    # 70 underscores, which is the default style of mdformat:
+    # https://mdformat.readthedocs.io/en/stable/users/style.html#thematic-breaks
+    'mdformat': '_' * 70,
+    # Matches Prettier's default thematic break:
+    'prettier': '---',
+}
 
 
 def createToc(  # noqa: C901
@@ -23,6 +27,7 @@ def createToc(  # noqa: C901
         add_horizontal_rules: bool = True,
         toc_title: str = 'Table of Contents',
         style: str = 'github',
+        horizontal_rule_style: str = DEFAULT_HORIZONTAL_RULE_STYLE,
 ) -> list[str]:
     """Create table of content"""
     if not quiet:
@@ -89,6 +94,7 @@ def createToc(  # noqa: C901
             print(entry.render())
 
     if in_place:
+        horizontal_rule: str = _resolve_horizontal_rule(horizontal_rule_style)
         if hasInsertionPoint:
             start, end = findTocInsertionPoint(lines)
             innerContent = _buildInnerTocContent(
@@ -96,6 +102,7 @@ def createToc(  # noqa: C901
                 add_toc_title=add_toc_title,
                 add_horizontal_rules=add_horizontal_rules,
                 toc_title=toc_title,
+                horizontal_rule=horizontal_rule,
             )
             prefix = lines[:start]
             suffix = lines[end + 1 :]
@@ -107,6 +114,7 @@ def createToc(  # noqa: C901
                 add_toc_title=add_toc_title,
                 add_horizontal_rules=add_horizontal_rules,
                 toc_title=toc_title,
+                horizontal_rule=horizontal_rule,
             )
 
         with open(filename, 'w', encoding='utf-8') as fp:
@@ -167,11 +175,12 @@ def _buildInnerTocContent(
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
+        horizontal_rule: str,
 ) -> list[str]:
     content: list[str] = ['']
 
     if add_horizontal_rules:
-        content.append(HORIZONTAL_RULE)
+        content.append(horizontal_rule)
         content.append('')
 
     if add_toc_title:
@@ -185,7 +194,7 @@ def _buildInnerTocContent(
         content.append('')
 
     if add_horizontal_rules:
-        content.append(HORIZONTAL_RULE)
+        content.append(horizontal_rule)
         content.append('')
 
     return content
@@ -196,12 +205,14 @@ def _buildProactiveBlock(
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
+        horizontal_rule: str,
 ) -> list[str]:
     innerContent = _buildInnerTocContent(
         tocLines=tocLines,
         add_toc_title=add_toc_title,
         add_horizontal_rules=add_horizontal_rules,
         toc_title=toc_title,
+        horizontal_rule=horizontal_rule,
     )
     return [TOC_TAG] + innerContent + [TOC_TAG]
 
@@ -212,12 +223,14 @@ def _insertTocWithoutPlaceholder(
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
+        horizontal_rule: str,
 ) -> list[str]:
     tocSection = _buildProactiveBlock(
         tocLines=tocLines,
         add_toc_title=add_toc_title,
         add_horizontal_rules=add_horizontal_rules,
         toc_title=toc_title,
+        horizontal_rule=horizontal_rule,
     )
     blockWithSpacing = [''] + tocSection
 
@@ -231,3 +244,13 @@ def _insertTocWithoutPlaceholder(
         return lines[:insertPos] + blockWithSpacing + lines[insertPos:]
 
     return blockWithSpacing + lines
+
+
+def _resolve_horizontal_rule(style: str) -> str:
+    try:
+        return HORIZONTAL_RULE_STYLES[style]
+    except KeyError as exc:
+        raise ValueError(
+            '"--horizontal-rule-style" must be one of'
+            f' {sorted(HORIZONTAL_RULE_STYLES)}'
+        ) from exc

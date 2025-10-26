@@ -22,6 +22,7 @@ ______________________________________________________________________
   - [3.7. `--add-toc-title`](#37---add-toc-title)
   - [3.8. `--toc-title`](#38---toc-title)
   - [3.9. `--add-horizontal-rules`](#39---add-horizontal-rules)
+  - [3.10. `--horizontal-rule-style`](#310---horizontal-rule-style)
 - [4. Compatibility with other formatters](#4-compatibility-with-other-formatters)
   - [4.1. With `markdown-heading-numbering`](#41-with-markdown-heading-numbering)
   - [4.2. With `mdformat`](#42-with-mdformat)
@@ -134,9 +135,17 @@ This config option has no effect if `--add-toc-title` is `False`.
 
 ### 3.9. `--add-horizontal-rules`
 
-If `True` (default), wrap the generated entries between horizontal rules
-(`---`) for additional separation. (The ToC title, if added, will be within the
-horizontal rules)
+If `True` (default), wrap the generated entries between horizontal rules for
+additional separation (the ToC title, if added, will be inside the rules). Pair
+this with `--horizontal-rule-style` to pick which thematic break format to use.
+
+### 3.10. `--horizontal-rule-style`
+
+Controls the style of the horizontal rules inserted when
+`--add-horizontal-rules` is enabled:
+
+- `mdformat` (default): uses 70 underscores to match `mdformat`'s style
+- `prettier`: uses `---` to match Prettier's style
 
 ## 4. Compatibility with other formatters
 
