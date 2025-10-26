@@ -42,6 +42,13 @@ def validateStyleValue(
     help='Create table of contents for markdown files',
 )
 @click.option(
+    '--proactive',
+    type=bool,
+    show_default=True,
+    default=True,
+    help='If True, insert a ToC even without placeholders.',
+)
+@click.option(
     '--exclude',
     type=str,
     show_default=True,
@@ -66,13 +73,6 @@ def validateStyleValue(
     show_default=True,
     default=True,
     help='If True, change the markdown file in place',
-)
-@click.option(
-    '--proactive',
-    type=bool,
-    show_default=True,
-    default=True,
-    help='If True, insert a ToC even without placeholders.',
 )
 @click.option(
     '--add-toc-title',
