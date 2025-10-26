@@ -19,8 +19,8 @@ echoAsError = True
 
 
 def validateStyleValue(
-        context: click.Context,
-        param: click.Parameter,
+        context: click.Context,  # noqa: ARG001
+        param: click.Parameter,  # noqa: ARG001
         value: str | None,
 ) -> str | None:
     """Validate the value of the 'style' option"""
@@ -134,6 +134,7 @@ def validateStyleValue(
 @click.pass_context
 def main(
         ctx: click.Context,
+        *,
         exclude: str,
         skip_first_n_lines: int,
         quiet: bool,
@@ -146,7 +147,7 @@ def main(
         paths: tuple[str, ...],
         style: str,
         horizontal_rule_style: str,
-):
+) -> None:
     """Command-line entry point"""
     ctx.ensure_object(dict)
 
@@ -182,6 +183,7 @@ def main(
 
 def _checkPaths(
         paths: tuple[str, ...],
+        *,
         exclude: str = '',
         skip_first_n_lines: int = 1,
         quiet: bool = False,
