@@ -78,6 +78,7 @@ ignore = [
   "N803", # These "N" codes are related to variable/module naming
   "N806",
   "N812",
+  "N815",
   "N816",
   "PLC1901", # it's fine to compare with empty string
   "S101", # it's fine to use assert
