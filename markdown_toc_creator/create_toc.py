@@ -17,8 +17,9 @@ HORIZONTAL_RULE_STYLES: dict[str, str] = {
 }
 
 
-def createToc(  # noqa: C901
+def createToc(  # noqa: C901, PLR0915
         filename: Path,
+        *,
         skip_first_n_lines: int = 1,
         quiet: bool = False,
         in_place: bool = True,
@@ -106,7 +107,7 @@ def createToc(  # noqa: C901
             )
             prefix = lines[:start]
             suffix = lines[end + 1 :]
-            final = prefix + [TOC_TAG] + innerContent + [TOC_TAG] + suffix
+            final = prefix + [TOC_TAG, *innerContent, TOC_TAG] + suffix
         else:
             final = _insertTocWithoutPlaceholder(
                 lines=lines,
@@ -130,7 +131,8 @@ def hasTocInsertionPoint(textLines: list[str]) -> bool:
         if line == TOC_TAG:
             tagCounter += 1
 
-    return tagCounter >= 2
+    min_required_tags_to_quality_as_an_insertion_point = 2
+    return tagCounter >= min_required_tags_to_quality_as_an_insertion_point
 
 
 def findTocInsertionPoint(textLine: list[str]) -> tuple[int, int]:
@@ -172,6 +174,7 @@ def _findFirstNonEmptyLine(lines: list[str]) -> int | None:
 
 def _buildInnerTocContent(
         tocLines: list[str],
+        *,
         add_toc_title: bool,
         add_horizontal_rules: bool,
         toc_title: str,
@@ -180,12 +183,10 @@ def _buildInnerTocContent(
     content: list[str] = ['']
 
     if add_horizontal_rules:
-        content.append(horizontal_rule)
-        content.append('')
+        content.extend((horizontal_rule, ''))
 
     if add_toc_title:
-        content.append(f'**{toc_title}**')
-        content.append('')
+        content.extend((f'**{toc_title}**', ''))
 
     if tocLines:
         content.extend(tocLines)
@@ -194,13 +195,13 @@ def _buildInnerTocContent(
         content.append('')
 
     if add_horizontal_rules:
-        content.append(horizontal_rule)
-        content.append('')
+        content.extend((horizontal_rule, ''))
 
     return content
 
 
 def _buildProactiveBlock(
+        *,
         tocLines: list[str],
         add_toc_title: bool,
         add_horizontal_rules: bool,
@@ -214,10 +215,11 @@ def _buildProactiveBlock(
         toc_title=toc_title,
         horizontal_rule=horizontal_rule,
     )
-    return [TOC_TAG] + innerContent + [TOC_TAG]
+    return [TOC_TAG, *innerContent, TOC_TAG]
 
 
 def _insertTocWithoutPlaceholder(
+        *,
         lines: list[str],
         tocLines: list[str],
         add_toc_title: bool,
@@ -232,7 +234,7 @@ def _insertTocWithoutPlaceholder(
         toc_title=toc_title,
         horizontal_rule=horizontal_rule,
     )
-    blockWithSpacing = [''] + tocSection
+    blockWithSpacing = ['', *tocSection]
 
     firstNonEmptyIndex = _findFirstNonEmptyLine(lines)
     if firstNonEmptyIndex is None:
