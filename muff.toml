@@ -2,7 +2,6 @@
 
 exclude = ["tests/test_data"]
 line-length = 79
-output-format = "grouped"
 target-version = "py310"
 
 [format]
