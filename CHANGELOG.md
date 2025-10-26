@@ -2,6 +2,17 @@
 
 # Change Log
 
+## [0.1.3] - 2025-10-26
+
+- Changed
+  - Split a new error named `HeaderLevelOutOfBoundError` from the original
+    error (`HeaderLevelNotContinuousError`)
+  - Improved error message to add instructions for users
+  - Changed logic to not fail immediately when one file failed
+  - Improved README.md
+- Full diff
+  - https://github.com/jsh9/markdown-toc-creator/compare/0.1.2...0.1.3
+
 ## [0.1.2] - 2025-10-26
 
 - Added
