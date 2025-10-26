@@ -81,7 +81,7 @@ def createToc(  # noqa: C901, PLR0915
                     " can't be correctly generated in this case. You may want"
                     ' to reduce the `--skip-first-n-lines` config option to'
                     ' skip fewer lines at the beginning of this file. Or you'
-                    f' can adjust the header lever Line {i + 1}.'
+                    f' can adjust the header level at Line {i + 1}.'
                 )
                 raise HeaderLevelOutOfBoundError(errMsg)
 

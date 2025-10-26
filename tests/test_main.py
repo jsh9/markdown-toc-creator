@@ -459,7 +459,7 @@ def test_cli_reports_errors_without_stopping(tmp_path: Path) -> None:
         " A table of contents can't be correctly generated in this case."
         ' You may want to reduce the `--skip-first-n-lines` config option'
         ' to skip fewer lines at the beginning of this file. Or you can'
-        ' adjust the header lever Line 13.'
+        ' adjust the header level at Line 13.'
     )
 
     assert expected_not_continuous_message in result.output
