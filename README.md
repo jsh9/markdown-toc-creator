@@ -25,6 +25,7 @@ ______________________________________________________________________
   - [3.8. `--toc-title` (default: `'Table of Contents'`)](#38---toc-title-default-table-of-contents)
   - [3.9. `--add-horizontal-rules` (default: `True`)](#39---add-horizontal-rules-default-true)
   - [3.10. `--horizontal-rule-style` (default: `'mdformat'`)](#310---horizontal-rule-style-default-mdformat)
+  - [3.11. `--config` (default: `'pyproject.toml'`)](#311---config-default-pyprojecttoml)
 - [4. Compatibility with other formatters](#4-compatibility-with-other-formatters)
   - [4.1. With `markdown-heading-numbering`](#41-with-markdown-heading-numbering)
   - [4.2. With `mdformat`](#42-with-mdformat)
@@ -167,6 +168,27 @@ Controls the style of the horizontal rules inserted when
 
 - `mdformat` (default): uses 70 underscores to match `mdformat`'s style
 - `prettier`: uses `---` to match Prettier's style
+
+### 3.11. `--config` (default: `'pyproject.toml'`)
+
+Use this option to load default values for the other flags from a TOML file.
+
+- By default the CLI looks for `[tool.markdown_toc_creator]` in file
+  `pyproject.toml`. You can point to another file with
+  `markdown-toc-creator --config <MY_TOML_FILE_NAME> <paths>`.
+- Keys inside the section use the same kebab-case flag names:
+
+```toml
+[tool.markdown_toc_creator]
+proactive = false
+add-toc-title = false
+horizontal-rule-style = "prettier"
+skip-first-n-lines = 2
+```
+
+- The TOML file must exist and contain the `[tool.markdown_toc_creator]`
+  section, otherwise the command exits with an error.
+- Explicit CLI arguments will override the values loaded from the config file
 
 ## 4. Compatibility with other formatters
 
