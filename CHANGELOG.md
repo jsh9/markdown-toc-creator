@@ -12,6 +12,8 @@
   - Improved README.md
 - Added
   - Support for using TOML file to specify config options
+- Fixed
+  - Generating anchor links for literal underscores
 - Full diff
   - https://github.com/jsh9/markdown-toc-creator/compare/0.1.2...0.1.3
 

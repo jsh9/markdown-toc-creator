@@ -68,6 +68,7 @@ class TocEntry:
 
         text = text.lower()
         text = cls.mdLinkToText(text)
+        text = _strip_markdown_underscore_emphasis(text)
 
         listOfCharGroups: list[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)
@@ -193,12 +194,7 @@ def _constructAnchorLink(listOfCharGroups: list[_CharGroup]) -> str:
 
             # We put `strip()` before replacing " " to "-" to prevent
             # double dashes
-            temp.append(
-                ''.join(charGroup.chars)
-                .strip()
-                .replace(' ', '-')
-                .replace('_', '')
-            )
+            temp.append(''.join(charGroup.chars).strip().replace(' ', '-'))
         else:
             temp.append(''.join(charGroup.chars).strip().replace(' ', '-'))
 
@@ -207,3 +203,26 @@ def _constructAnchorLink(listOfCharGroups: list[_CharGroup]) -> str:
         '',
         '-'.join(temp),
     )
+
+
+def _strip_markdown_underscore_emphasis(text: str) -> str:
+    """Remove underscore emphasis markers while keeping literal underscores."""
+
+    def _strip(pattern: re.Pattern[str], source: str) -> str:
+        previous = None
+        result = source
+        while previous != result:
+            previous = result
+            result = pattern.sub(r'\1', result)
+
+        return result
+
+    # Remove double underscores first to handle bold markers, then single.
+    patterns = [
+        re.compile(r'(?<!\w)__(?=\S)(.+?)(?<=\S)__(?!\w)'),
+        re.compile(r'(?<!\w)_(?=\S)(.+?)(?<=\S)_(?!\w)'),
+    ]
+    for pattern in patterns:
+        text = _strip(pattern, text)
+
+    return text
