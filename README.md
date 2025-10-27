@@ -17,7 +17,7 @@ ______________________________________________________________________
     - [3.1.1. If `--proactive=True`](#311-if---proactivetrue)
     - [3.1.2. If `--proactive=False`](#312-if---proactivefalse)
   - [3.2. `--style` (default: "github")](#32---style-default-github)
-  - [3.3. `--exclude` (default: '.git|.tox|.pytest_cache')](#33---exclude-default-gittoxpytestcache)
+  - [3.3. `--exclude` (default: '.git|.tox|.pytest_cache')](#33---exclude-default-gittoxpytest_cache)
   - [3.4. `--in-place` (default: `True`)](#34---in-place-default-true)
   - [3.5. `--quiet` (or `-q` ,default: `False`)](#35---quiet-or--q-default-false)
   - [3.6. `--skip-first-n-lines` (default: 1)](#36---skip-first-n-lines-default-1)
