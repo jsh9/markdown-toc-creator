@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 
 import click
+from click_config_file_injection_utils import injectDefaultOptionsFromToml
 
 from markdown_toc_creator import __version__
 from markdown_toc_creator.create_toc import (
@@ -40,6 +41,24 @@ def validateStyleValue(
 @click.command(
     context_settings={'help_option_names': ['-h', '--help']},
     help='Create table of contents for markdown files',
+)
+@click.option(
+    '--config',
+    type=str,
+    default='pyproject.toml',
+    show_default=True,
+    expose_value=False,
+    is_eager=True,
+    callback=lambda ctx, param, value: injectDefaultOptionsFromToml(
+        ctx,
+        param,
+        value,
+        toolSectionName='markdown_toc_creator',
+    ),
+    help=(
+        'Load defaults from the [tool.markdown_toc_creator] section of a TOML'
+        ' file.'
+    ),
 )
 @click.option(
     '--proactive',

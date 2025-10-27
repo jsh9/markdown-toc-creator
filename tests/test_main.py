@@ -418,6 +418,111 @@ def test_cli_toc_title_option(
     )
 
 
+@pytest.mark.parametrize(
+    ('config_lines', 'before_filename', 'after_filename'),
+    [
+        (
+            ['add-toc-title = false'],
+            'with_heading.md',
+            'with_heading_no_title.md',
+        ),
+        (
+            ['add-horizontal-rules = false'],
+            'with_heading.md',
+            'with_heading_no_rules.md',
+        ),
+        (
+            [
+                'add-toc-title = false',
+                'add-horizontal-rules = false',
+            ],
+            'with_heading.md',
+            'with_heading_minimal.md',
+        ),
+        (
+            ['proactive = false'],
+            'proactive_disabled.md',
+            'proactive_disabled.md',
+        ),
+    ],
+)
+def test_cli_config_file_injects_defaults(
+        tmp_path: Path,
+        config_lines: list[str],
+        before_filename: str,
+        after_filename: str,
+) -> None:
+    config: Path = tmp_path / 'toc-config.toml'
+    config.write_text(
+        '\n'.join(['[tool.markdown_toc_creator]', *config_lines]),
+        encoding='utf-8',
+    )
+    _assert_cli_result(
+        tmp_path=tmp_path,
+        base_dir=PROACTIVE_DATA,
+        before_filename=before_filename,
+        after_filename=after_filename,
+        cli_args=['--config', str(config)],
+    )
+
+
+def test_cli_config_default_pyproject(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    workspace = tmp_path / 'workspace'
+    workspace.mkdir()
+    before = workspace / 'with_heading.md'
+    copyfile(PROACTIVE_DATA / 'before' / 'with_heading.md', before)
+    pyproject = workspace / 'pyproject.toml'
+    pyproject.write_text(
+        (
+            '[tool.markdown_toc_creator]'
+            '\nadd-toc-title = false'
+            '\nadd-horizontal-rules = false'
+        ),
+        encoding='utf-8',
+    )
+
+    runner = CliRunner()
+    monkeypatch.chdir(workspace)
+    result = runner.invoke(main, [before.name])
+    assert result.exit_code == 0
+
+    expected = PROACTIVE_DATA / 'after' / 'with_heading_minimal.md'
+    assert before.read_text(encoding='utf-8') == expected.read_text(
+        encoding='utf-8'
+    )
+
+
+def test_cli_config_file_requires_tool_section(tmp_path: Path) -> None:
+    config: Path = tmp_path / 'toc-config.toml'
+    config.write_text(
+        '[tool.some_other_tool]\nadd-toc-title = false', encoding='utf-8'
+    )
+    runner = CliRunner()
+    before_path: Path = PROACTIVE_DATA / 'before' / 'with_heading.md'
+    target: Path = tmp_path / 'with_heading.md'
+    copyfile(before_path, target)
+
+    result = runner.invoke(main, ['--config', str(config), str(target)])
+    assert result.exit_code == 2
+    assert (
+        'does not have a [tool.markdown_toc_creator] section.' in result.output
+    )
+
+
+def test_cli_config_file_missing(tmp_path: Path) -> None:
+    missing: Path = tmp_path / 'does-not-exist.toml'
+    runner = CliRunner()
+    before_path: Path = PROACTIVE_DATA / 'before' / 'with_heading.md'
+    target: Path = tmp_path / 'with_heading.md'
+    copyfile(before_path, target)
+
+    result = runner.invoke(main, ['--config', str(missing), str(target)])
+    assert result.exit_code == 2
+    assert f'Config file "{missing}" does not exist.' in result.output
+
+
 def test_cli_multiple_runs_default_idempotent(tmp_path: Path) -> None:
     """Assert only 1 ToC no matter how many times the tool is run"""
     runner = CliRunner()
