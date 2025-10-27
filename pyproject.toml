@@ -7,6 +7,7 @@ name = "markdown_toc_creator"
 version = "0.1.3"
 dependencies = [
   "beautifulsoup4>=4.12.0",
+  "click-config-file-injection-utils>=0.1.0",
   "click>=8.0.0",
 ]
 requires-python = ">=3.10"

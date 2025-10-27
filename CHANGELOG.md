@@ -10,6 +10,8 @@
   - Improved error message to add instructions for users
   - Changed logic to not fail immediately when one file failed
   - Improved README.md
+- Added
+  - Support for using TOML file to specify config options
 - Full diff
   - https://github.com/jsh9/markdown-toc-creator/compare/0.1.2...0.1.3
 
