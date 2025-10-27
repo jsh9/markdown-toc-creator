@@ -9,6 +9,7 @@ dependencies = [
   "beautifulsoup4>=4.12.0",
   "click-config-file-injection-utils>=0.1.1",
   "click>=8.0.0",
+  "tomli; python_version<'3.11'",
 ]
 requires-python = ">=3.10"
 classifiers = [
