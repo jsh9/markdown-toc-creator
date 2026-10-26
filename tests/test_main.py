@@ -661,3 +661,34 @@ Mathematical expression.
         ],
     }
     assert tocLines == expected[style]
+
+
+@pytest.mark.parametrize('style', ['github', 'gitlab'])
+def testInlineCodeAnchorDeduplication(style: str, tmp_path: Path) -> None:
+    filename = tmp_path / 'inline_code.md'
+    copyfile(DATA_DIR / 'inline_code_boundaries.md', filename)
+    tocLines = createToc(
+        filename=filename,
+        skip_first_n_lines=1,
+        quiet=True,
+        in_place=True,
+        style=style,
+    )
+    assert tocLines == [
+        '- [`uv`-managed environments](#uv-managed-environments)',
+        '- [`foo`bar](#foobar)',
+        '- [foo`bar`](#foobar-1)',
+        '- [foobar](#foobar-2)',
+        '- [`rsync` over SSH](#rsync-over-ssh)',
+    ]
+    firstOutput = filename.read_text(encoding='utf-8')
+    assert '\n'.join(tocLines) in firstOutput
+    assert '## `uv`-managed environments' in firstOutput
+    createToc(
+        filename=filename,
+        skip_first_n_lines=1,
+        quiet=True,
+        in_place=True,
+        style=style,
+    )
+    assert filename.read_text(encoding='utf-8') == firstOutput

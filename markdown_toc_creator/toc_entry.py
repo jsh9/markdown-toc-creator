@@ -169,7 +169,7 @@ def _buildListOfCharGroups(string: str) -> list[_CharGroup]:
     else:
         result = [_CharGroup(chars=[string[0]], insideBacktickPairs=False)]
 
-    isWithinBacktickPair: bool = False
+    isWithinBacktickPair: bool = result[0].insideBacktickPairs
     for char in string[1:]:
         if char == '`':
             isWithinBacktickPair = not isWithinBacktickPair
@@ -187,22 +187,27 @@ def _buildListOfCharGroups(string: str) -> list[_CharGroup]:
 
 def _constructAnchorLink(listOfCharGroups: list[_CharGroup]) -> str:
     temp: list[str] = []
-    for charGroup in listOfCharGroups:
-        if not charGroup.insideBacktickPairs:
-            # This is fine for both GitHub and Gitlab styles
+    for index, charGroup in enumerate(listOfCharGroups):
+        if index == 0 and not charGroup.insideBacktickPairs:
             charGroup.reduceToOnlyOneLeadingNonAlphaNumericChars()
 
-            # We put `strip()` before replacing " " to "-" to prevent
-            # double dashes
-            temp.append(''.join(charGroup.chars).strip().replace(' ', '-'))
-        else:
-            temp.append(''.join(charGroup.chars).strip().replace(' ', '-'))
+        text = ''.join(charGroup.chars)
+        if (
+            charGroup.insideBacktickPairs
+            and text.startswith(' ')
+            and text.endswith(' ')
+            and text.strip(' ')
+        ):
+            # CommonMark removes one edge space only when both ends have a
+            # space and the code span is not made entirely of spaces.
+            text = text[1:-1]
 
-    return re.sub(
-        r'[^\w\s-]+',
-        '',
-        '-'.join(temp),
-    )
+        temp.append(text)
+
+    # Code-span boundaries do not introduce spaces. Preserve the actual
+    # whitespace between groups and normalize only after joining them.
+    text = ''.join(temp).strip().replace(' ', '-')
+    return re.sub(r'[^\w\s-]+', '', text)
 
 
 def _strip_markdown_underscore_emphasis(text: str) -> str:

@@ -74,6 +74,13 @@ from markdown_toc_creator.toc_entry import (
             ],
         ),
         (
+            '`ab`cd',
+            [
+                _CharGroup(chars=['a', 'b'], insideBacktickPairs=True),
+                _CharGroup(chars=['c', 'd'], insideBacktickPairs=False),
+            ],
+        ),
+        (
             '`abcd',
             [
                 _CharGroup(
@@ -219,3 +226,56 @@ def testReduceToOnlyOneLeadingNonAlphaNumericChars(
     charGroup = _CharGroup(chars=oldChars, insideBacktickPairs=False)
     charGroup.reduceToOnlyOneLeadingNonAlphaNumericChars()
     assert ''.join(charGroup.chars) == expectedChars
+
+
+@pytest.mark.parametrize('style', ['github', 'gitlab'])
+@pytest.mark.parametrize(
+    ('heading', 'githubAnchor', 'gitlabAnchor'),
+    [
+        (
+            '`uv`-managed environments',
+            '#uv-managed-environments',
+            '#uv-managed-environments',
+        ),
+        ('`foo`bar', '#foobar', '#foobar'),
+        ('`foo `bar', '#foo-bar', '#foo-bar'),
+        ('foo` bar`', '#foo-bar', '#foo-bar'),
+        ('`  code  `suffix', '#code-suffix', '#code-suffix'),
+        ('before` `after', '#before-after', '#before-after'),
+        ('before`  `after', '#before--after', '#before-after'),
+        (
+            'prefix`  code  `suffix',
+            '#prefix-code-suffix',
+            '#prefix-code-suffix',
+        ),
+        ('`foo`--bar', '#foo--bar', '#foo-bar'),
+        ('`foo`  bar', '#foo--bar', '#foo-bar'),
+        ('` code `suffix', '#codesuffix', '#codesuffix'),
+        (
+            'prefix ` code ` suffix',
+            '#prefix-code-suffix',
+            '#prefix-code-suffix',
+        ),
+        ('foo`bar`', '#foobar', '#foobar'),
+        ('foo`bar`baz', '#foobarbaz', '#foobarbaz'),
+        ('`foo`-`bar`', '#foo-bar', '#foo-bar'),
+        ('`foo`/`bar`', '#foobar', '#foobar'),
+        ('`rsync` over SSH', '#rsync-over-ssh', '#rsync-over-ssh'),
+        ('prefix `code` suffix', '#prefix-code-suffix', '#prefix-code-suffix'),
+        (
+            'prefix  `code`  suffix',
+            '#prefix--code--suffix',
+            '#prefix-code-suffix',
+        ),
+    ],
+)
+def testInlineCodeBoundaries(
+        style: str,
+        heading: str,
+        githubAnchor: str,
+        gitlabAnchor: str,
+) -> None:
+    entry = TocEntry(heading, '', style)
+    assert entry.anchorLinkText == (
+        githubAnchor if style == 'github' else gitlabAnchor
+    )
