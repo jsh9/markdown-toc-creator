@@ -219,3 +219,13 @@ def testReduceToOnlyOneLeadingNonAlphaNumericChars(
     charGroup = _CharGroup(chars=oldChars, insideBacktickPairs=False)
     charGroup.reduceToOnlyOneLeadingNonAlphaNumericChars()
     assert ''.join(charGroup.chars) == expectedChars
+
+
+@pytest.mark.parametrize('style', ['github', 'gitlab'])
+@pytest.mark.parametrize('heading', ['# !!!', '# ...', '# ---', '# '])
+def test_punctuation_only_heading_does_not_crash(
+        heading: str, style: str
+) -> None:
+    entry = TocEntry(heading, '', style)
+    assert entry.anchorLinkText == '#'
+    assert entry.render().endswith('(#)')
