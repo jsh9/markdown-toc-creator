@@ -70,14 +70,22 @@ class TocEntry:
         text = cls.mdLinkToText(text)
         text = _strip_markdown_underscore_emphasis(text)
 
+        # Headings with no anchorable text (e.g. "#" or "# !!!") would
+        # otherwise crash with IndexError below; GitHub renders these
+        # with an empty anchor, so link to the top of the document.
+        if not text:
+            return '#'
+
         listOfCharGroups: list[_CharGroup] = _buildListOfCharGroups(text)
         anchorLink: str = _constructAnchorLink(listOfCharGroups)
 
         if style == 'gitlab':
             anchorLink = re.sub(r'-+', '-', anchorLink)
 
-        # check last character
-        anchorLink = anchorLink[:-1] if anchorLink[-1] == '-' else anchorLink
+        # check last character (anchorLink may be empty for
+        # punctuation-only headings such as "# !!!")
+        if anchorLink.endswith('-'):
+            anchorLink = anchorLink[:-1]
 
         # prepend '#' to create a URL anchor
         return '#' + anchorLink
